@@ -1,0 +1,2 @@
+<?php
+return array("#tableName"=>"Etablissement","#primaryKeys"=>array("id"),"#manyToOne"=>array(),"#fieldNames"=>array("id"=>"id","fondEcran"=>"fondEcran","couleur"=>"couleur","ordre"=>"ordre","options"=>"options","lienwebs"=>"lienwebs","moteurs"=>"moteurs"),"#nullable"=>array(),"#notSerializable"=>array("lienwebs","moteurs"),"#oneToMany"=>array("lienwebs"=>array("mappedBy"=>"etablissement","className"=>"models\Lienweb"),"moteurs"=>array("mappedBy"=>"etablissement","className"=>"models\Moteur")));
