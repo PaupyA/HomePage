@@ -19,17 +19,5 @@ return array(
   'controllers\\SitesController::index' => array(
     array('#name' => 'route', '#type' => 'micro\\annotations\\router\\RouteAnnotation', "/home")
   ),
-  'controllers\\SitesController::all' => array(
-    array('#name' => 'route', '#type' => 'micro\\annotations\\router\\RouteAnnotation', "/listeSites")
-  ),
-  'controllers\\SitesController::addSite' => array(
-    array('#name' => 'route', '#type' => 'micro\\annotations\\router\\RouteAnnotation', "addSite/.*?")
-  ),
-  'controllers\\SitesController::newSite' => array(
-    array('#name' => 'route', '#type' => 'micro\\annotations\\router\\RouteAnnotation', "newSite/.*?")
-  ),
-  'controllers\\SitesController::editSite' => array(
-    array('#name' => 'route', '#type' => 'micro\\annotations\\router\\RouteAnnotation', "editSite/.*?")
-  ),
 );
 

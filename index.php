@@ -14,3 +14,4 @@ require_once ROOT.'./../vendor/autoload.php';
 Autoloader::register($config);
 require_once ROOT.'config/services.php';
 Startup::run($config,$_GET["c"]);
+
