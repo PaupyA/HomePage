@@ -33,8 +33,8 @@ class SitesController extends ControllerBase
 
     public function all(){
         $semantic=$this->jquery->semantic();
-        $bt=$semantic->htmlButton("btAddSite","Ajouter un site");
-        $bt->onClick("addSite");
+        $btAll=$semantic->htmlButton("btAllSite","Liste des sites");
+        $btAdd=$semantic->htmlButton("btAddSite","Ajouter un site");
         $sites=DAO::getAll("models\Site");
         $semantic=$this->jquery->semantic();
         $table=$semantic->dataTable("site", "models\Site", $sites);
@@ -46,7 +46,8 @@ class SitesController extends ControllerBase
         $table->setTargetSelector("#site");
         $table->addDeleteButton(false);
         $table->fieldAsHidden("id");
-        echo "</br>". $bt;
+        echo "</br>". $btAll. $btAdd;
+
         echo $table->compile($this->jquery);
         echo $this->jquery->compile();
     }
@@ -85,7 +86,6 @@ class SitesController extends ControllerBase
         echo "<div id='divSite'></div>";
         echo $form->compile($this->jquery);
         echo $this->jquery->compile();
-
     }
     public function updateSite($id) {
         $site = DAO::getOne("models\Site",$id );
@@ -98,7 +98,6 @@ class SitesController extends ControllerBase
 
 
     public function deleteSite($id) {
-
         $site = DAO::getOne("models\Site",$id );
         if(DAO::remove($site)) {
             echo $site->getNom()." supprimé";
