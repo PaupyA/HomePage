@@ -146,4 +146,10 @@ class Site{
 		$this->utilisateurs=$utilisateurs;
 	}
 
+	public function __toString()
+    {
+        // TODO: Implement __toString() method.
+        return $this->nom;
+    }
+
 }

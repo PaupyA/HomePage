@@ -40,7 +40,13 @@ class Utilisateur{
 	*/
 	private $moteurs;
 
-	 public function getId(){
+	public function __construct()
+    {
+        $this->site="";
+        $this->statut="";
+    }
+
+    public function getId(){
 		return $this->id;
 	}
 
