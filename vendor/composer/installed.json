@@ -77,64 +77,6 @@
         "homepage": "http://jquery.com"
     },
     {
-        "name": "phpmv/php-mv-ui",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/phpMv/phpMv-UI.git",
-            "reference": "541414153fb54e02bf0073f998779e77d1b148c1"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/phpMv/phpMv-UI/zipball/541414153fb54e02bf0073f998779e77d1b148c1",
-            "reference": "541414153fb54e02bf0073f998779e77d1b148c1",
-            "shasum": ""
-        },
-        "require": {
-            "frameworks/jquery": "~2.1",
-            "php": ">5.3.9"
-        },
-        "suggest": {
-            "components/jqueryui": "~1.11",
-            "semantic/ui": "~2.2.1",
-            "twitter/bootstrap": "~3.3"
-        },
-        "time": "2017-06-12T22:43:55+00:00",
-        "type": "phpmv-ui",
-        "installation-source": "source",
-        "autoload": {
-            "psr-4": {
-                "Ajax\\": "Ajax/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "Apache-2.0"
-        ],
-        "authors": [
-            {
-                "name": "Jean-Christophe HERON",
-                "email": "myaddressmail@gmail.com",
-                "role": "Developer"
-            }
-        ],
-        "description": "A JQuery and UI library for php and php MVC frameworks",
-        "keywords": [
-            "codeigniter",
-            "framework",
-            "jQuery UI",
-            "jquery",
-            "laravel",
-            "phalcon",
-            "php",
-            "semantic ui",
-            "symfony",
-            "twitter bootstrap",
-            "yii"
-        ]
-    },
-    {
         "name": "twig/twig",
         "version": "v1.35.0",
         "version_normalized": "1.35.0.0",
@@ -199,6 +141,64 @@
         "homepage": "http://twig.sensiolabs.org",
         "keywords": [
             "templating"
+        ]
+    },
+    {
+        "name": "phpmv/php-mv-ui",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/phpMv/phpMv-UI.git",
+            "reference": "b1ec619b0fcad98296e1651e22b25061c31fd1ce"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/phpMv/phpMv-UI/zipball/b1ec619b0fcad98296e1651e22b25061c31fd1ce",
+            "reference": "b1ec619b0fcad98296e1651e22b25061c31fd1ce",
+            "shasum": ""
+        },
+        "require": {
+            "frameworks/jquery": "~2.1",
+            "php": ">5.3.9"
+        },
+        "suggest": {
+            "components/jqueryui": "~1.11",
+            "semantic/ui": "~2.2.1",
+            "twitter/bootstrap": "~3.3"
+        },
+        "time": "2017-10-05T15:15:33+00:00",
+        "type": "phpmv-ui",
+        "installation-source": "source",
+        "autoload": {
+            "psr-4": {
+                "Ajax\\": "Ajax/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "authors": [
+            {
+                "name": "Jean-Christophe HERON",
+                "email": "myaddressmail@gmail.com",
+                "role": "Developer"
+            }
+        ],
+        "description": "A JQuery and UI library for php and php MVC frameworks",
+        "keywords": [
+            "codeigniter",
+            "framework",
+            "jQuery UI",
+            "jquery",
+            "laravel",
+            "phalcon",
+            "php",
+            "semantic ui",
+            "symfony",
+            "twitter bootstrap",
+            "yii"
         ]
     }
 ]

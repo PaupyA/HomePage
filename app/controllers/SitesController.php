@@ -28,6 +28,7 @@ class SitesController extends ControllerBase
         echo "</br>";
         $btHome=$semantic->htmlButton("btHome","");
         $btHome->asIcon("home")->asLink("BoardController");
+
         $bts=$semantic->htmlButtonGroups("buttons",["Liste des sites","Ajouter un site"]);
         $bts->setPropertyValues("data-ajax", ["SitesController/all/","SitesController/addSite/"]);
 
