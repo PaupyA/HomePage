@@ -22,8 +22,6 @@ class BoardController extends ControllerBase
     public function index() {
         $semantic=$this->jquery->semantic();
 
-        echo "</br ><h1> Tableau de bord </h1> <h3>Vue d'ensemble</h3> </br>";
-
         $btSites=$semantic->htmlButton("btSites","Gestion des sites");
         $btSites->asLink("SitesController");
 
@@ -33,11 +31,7 @@ class BoardController extends ControllerBase
         $btLinks=$semantic->htmlButton("btLinks","Gestion des liens");
         $btLinks->asLink("LinksController");
 
-        $bt=$semantic->htmlButton("btUsers","Gestion des utilisateurs");
-        $btUsers->asLink("UsersController");
-
-        echo $btSites;
-        echo $btUsers;
-        echo $btLinks;
+        $this->jquery->compile($this->view);
+        $this->loadView("board/index.html");
     }
 }
