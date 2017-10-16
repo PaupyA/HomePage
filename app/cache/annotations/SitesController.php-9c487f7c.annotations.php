@@ -16,8 +16,5 @@ return array(
   'controllers\\SitesController' => array(
     array('#name' => 'property', '#type' => 'mindplay\\annotations\\standard\\PropertyAnnotation', 'type' => 'JsUtils', 'name' => 'jquery')
   ),
-  'controllers\\SitesController::index' => array(
-    array('#name' => 'route', '#type' => 'micro\\annotations\\router\\RouteAnnotation', "/home")
-  ),
 );
 

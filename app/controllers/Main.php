@@ -3,10 +3,11 @@ namespace controllers;
  /**
  * Controller Main
  **/
-
+use Ajax\service\JArray;
 use micro\orm\DAO;
 use Ajax\JsUtils;
 use micro\utils\RequestUtils;
+use models\Utilisateur;
 
 /**
  * Controller UseController
@@ -22,28 +23,17 @@ class Main extends ControllerBase
 
         echo "</br ><h1> Accueil </h1> </br>";
 
-        $bts=$semantic->htmlButtonGroups("buttons",["Liste des utilisateurs","Ajouter un utilisateur"]);
-        $bts->setPropertyValues("data-ajax", ["Main/connexion/","Main/connexion/"]);
+        $bts=$semantic->htmlButtonGroups("buttons",["Se connecter"]);
+        $bts->setPropertyValues("data-ajax", ["Main/connexion"]);
 
         $bts->getOnClick("","#accueil",["attr"=>"data-ajax"]);
 
         echo $bts;
+        echo $this->jquery->compile($this->view);
+        echo "<div id='accueil'></div>";
     }
 
     public function connexion() {
-
-        $semantic=$this->jquery->semantic();
-
-        $log = DAO::getAll("models\Utilisateur");
-        $form=$semantic->dataForm("frmLogin", $log);
-        $form->setFields(["login","password","submit"]);
-        $form->setCaptions(["Login","Password","Valider"]);
-        $form->fieldAsSubmit("submit","green", "Main/verificationLogin", "#accueil");
-
-        echo "<div id='accueil'></div>";
-        echo $form->compile($this->jquery);
-        echo $this->jquery->compile();
-
 
     }
 }

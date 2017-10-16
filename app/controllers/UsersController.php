@@ -68,9 +68,9 @@ class UsersController extends ControllerBase
         $form->fieldAsDropDown("site",JArray::modelArray($sites,"getId","getNom"));
         $status=DAO::getAll("models\Statut");
         $form->fieldAsDropDown("statut",JArray::modelArray($status,"getId","getLibelle"));
-        echo "<div id='divUser'></div>";
         echo $form->compile($this->jquery);
         echo $this->jquery->compile();
+        echo "<div id='divUser'></div>";
 
     }
     public function newUser() {
@@ -81,7 +81,7 @@ class UsersController extends ControllerBase
         $statut=DAO::getOne("models\Statut",$_POST["statut"]);
         $user->setStatut($statut);
         if(DAO::insert($user)){
-            echo $user->getLogin()." ajouté";
+            echo "</br>". $user->getLogin()." ajouté";
         }
     }
 
@@ -96,9 +96,10 @@ class UsersController extends ControllerBase
         $form->fieldAsDropDown("site",JArray::modelArray($sites,"getId","getNom"));
         $status=DAO::getAll("models\Statut");
         $form->fieldAsDropDown("statut",JArray::modelArray($status,"getId","getLibelle"));
-        echo "<div id='divUser'></div>";
+
         echo $form->compile($this->jquery);
         echo $this->jquery->compile();
+        echo "<div id='divUser'></div>";
     }
     public function updateUser($id) {
         $user = DAO::getOne("models\Utilisateur",$id );

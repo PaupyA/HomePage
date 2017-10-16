@@ -10,11 +10,11 @@ return array(
   'Utilisateur' => 'models\\Utilisateur',
 ),
   '#traitMethodOverrides' => array (
-  'controllers\\Main' => 
+  'controllers\\UsersController' => 
   array (
   ),
 ),
-  'controllers\\Main' => array(
+  'controllers\\UsersController' => array(
     array('#name' => 'property', '#type' => 'mindplay\\annotations\\standard\\PropertyAnnotation', 'type' => 'JsUtils', 'name' => 'jquery')
   ),
 );
