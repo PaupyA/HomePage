@@ -22,42 +22,45 @@ use models\Site;
 class SitesController extends ControllerBase
 {
     public function index() {
-        $semantic=$this->jquery->semantic();
 
-        echo "</br>";
+        $semantic=$this->jquery->semantic();
 
         $btHome=$semantic->htmlButton("btHome","");
         $btHome->asIcon("home")->asLink("BoardController");
 
         $bts=$semantic->htmlButtonGroups("buttons",["Liste des sites","Ajouter un site"]);
-        $bts->setPropertyValues("data-ajax", ["SitesController/all/","SitesController/addSite/"]);
+        $bts->setPropertyValues("data-ajax", ["all/","addSite/"]);
+        $bts->getOnClick("SitesController/","#divSites",["attr"=>"data-ajax"]);
 
-        $bts->getOnClick("","#formSite",["attr"=>"data-ajax"]);
-
-        $this->all();
+        $this->_all();
         $this->jquery->compile($this->view);
         $this->loadView("sites/index.html");
-    }
+}
 
-    public function all(){
+    private function _all(){
+        $sites=DAO::getAll("models\Site");
+
         $semantic=$this->jquery->semantic();
 
-        $sites=DAO::getAll("models\Site");
         $table=$semantic->dataTable("tblSites", "models\Site", $sites);
 
         $table->setIdentifierFunction(function($i,$o){return $o->getId();});
-
         $table->setFields(["nom","latitude","longitude","id"]);
         $table->setCaptions(["Nom de l'établissement","Latitude","Longitude"]);
 
         $table->addEditButton(false);
         $table->addDeleteButton(false);
         $table->setUrls(["edit"=>"SitesController/editSite","delete"=>"SitesController/deleteSite"]);
-        $table->setTargetSelector("#formSite");
+        $table->setTargetSelector("#divSites");
         $table->fieldAsHidden("id");
     }
+    public function all(){
+        $this->_all();
+        $this->jquery->compile($this->view);
+        $this->loadView("sites/all.html");
+    }
 
-    public function addSite() {
+    private function _addSite() {
         $semantic=$this->jquery->semantic();
 
         $site=new Site();
@@ -67,6 +70,12 @@ class SitesController extends ControllerBase
         $form->setCaptions(["Nom de l'établissement","Latitude","Longitude","Ecart","Fond d'écran","Couleur","Ordre","Options","Valider"]);
         $form->fieldAsSubmit("submit","blue","SitesController/newSite/","#formSite");
         $form->fieldAsImage("fondEcran");
+    }
+
+    public function addSite() {
+        $this->_addSite();
+        $this->jquery->compile($this->view);
+        $this->loadView("sites/add.html");
     }
     public function newSite() {
         $site=new Site();
@@ -79,9 +88,7 @@ class SitesController extends ControllerBase
         }
     }
 
-
-
-    public function editSite($id) {
+    private function _editSite($id) {
         $semantic=$this->jquery->semantic();
 
         $site = DAO::getOne("models\Site",$id  );
@@ -92,9 +99,12 @@ class SitesController extends ControllerBase
         $form->setCaptions(["Nom de l'établissement","Latitude","Longitude","Ecart","Fond d'écran","Couleur","Ordre","Options","Valider"]);
         $form->fieldAsSubmit("submit","blue","SitesController/updateSite/".$id,"#formSite");
         $form->fieldAsImage("fondEcran");
+    }
 
+    public function editSite($id) {
+        $this->_editSite($id);
         $this->jquery->compile($this->view);
-        $this->loadView("sites/index.html");
+        $this->loadView("sites/edit.html");
     }
     public function updateSite($id) {
         $site = DAO::getOne("models\Site",$id );
