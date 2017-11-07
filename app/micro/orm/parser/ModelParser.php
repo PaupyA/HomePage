@@ -3,6 +3,7 @@
 namespace micro\orm\parser;
 
 use micro\utils\JArray;
+use micro\cache\ClassUtils;
 
 class ModelParser {
 	protected $global;
@@ -15,6 +16,7 @@ class ModelParser {
 	protected $nullableMembers=[ ];
 	protected $notSerializableMembers=[ ];
 	protected $fieldNames;
+	protected $fieldTypes=[];
 
 	public function parse($modelClass) {
 		$instance=new $modelClass();
@@ -34,6 +36,13 @@ class ModelParser {
 				$this->nullableMembers[]=$propName;
 			if (!$serializable)
 				$this->notSerializableMembers[]=$propName;
+			$type=Reflexion::getAnnotationMember($modelClass, $propName, "@var");
+			if($type===false){
+				$type="string";
+			}else{
+				$type=$type->type;
+			}
+			$this->fieldTypes[$propName]=$type;
 		}
 		$this->global["#tableName"]=Reflexion::getTableName($modelClass);
 	}
@@ -43,6 +52,7 @@ class ModelParser {
 		$result["#primaryKeys"]=$this->primaryKeys;
 		$result["#manyToOne"]=$this->manytoOneMembers;
 		$result["#fieldNames"]=$this->fieldNames;
+		$result["#fieldTypes"]=$this->fieldTypes;
 		$result["#nullable"]=$this->nullableMembers;
 		$result["#notSerializable"]=$this->notSerializableMembers;
 		foreach ( $this->oneToManyMembers as $member => $annotation ) {
@@ -58,7 +68,7 @@ class ModelParser {
 
 		foreach ( $this->joinColumnMembers as $member => $annotation ) {
 			$result["#joinColumn"][$member]=$annotation->getPropertiesAndValues();
-			$result["#invertedJoinColumn"][$annotation->name]=[ "member" => $member,"className" => $annotation->className ];
+			$result["#invertedJoinColumn"][$annotation->name]=[ "member" => $member,"className" => ClassUtils::cleanClassname($annotation->className) ];
 		}
 		return "return " . JArray::asPhpArray($result, "array") . ";";
 	}

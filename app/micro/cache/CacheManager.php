@@ -52,6 +52,14 @@ class CacheManager {
 		return self::$cache->expired("controllers/" . $key, $duration) === true || \array_key_exists($key, self::$expiredRoutes);
 	}
 
+	public static function isExpired($path,$duration){
+		$route=Router::getRoute($path,false);
+		if($route!==false && \is_array($route)){
+			return self::expired(self::getRouteKey($route), $duration);
+		}
+		return true;
+	}
+
 	public static function setExpired($routePath, $expired=true) {
 		$key=self::getRouteKey($routePath);
 		self::setKeyExpired($key, $expired);
@@ -169,34 +177,28 @@ class CacheManager {
 		$modelsNS=$config["mvcNS"]["models"];
 		$modelsDir=ROOT . DS . str_replace("\\", DS, $modelsNS);
 		echo "Models directory is " . ROOT . $modelsNS . "\n";
-		$files=glob($modelsDir . DS . '*');
-		$namespace="";
-		if (isset($modelsNS) && $modelsNS !== "")
-			$namespace=$modelsNS . "\\";
+		$files=self::glob_recursive($modelsDir . DS . '*');
 		foreach ( $files as $file ) {
 			if (is_file($file)) {
-				$model=self::getClassNameFromFile($file, $namespace);
+				$model=ClassUtils::getClassFullNameFromFile($file);
 				new $model();
 			}
 		}
 	}
 
-	private static function getClassNameFromFile($file, $namespace="") {
-		$fileName=pathinfo($file, PATHINFO_FILENAME);
-		return $namespace . ucfirst($fileName);
+	public static function getControllerFiles(&$config,$silent=false){
+		$controllersNS=$config["mvcNS"]["controllers"];
+		$controllersDir=ROOT . DS . str_replace("\\", DS, $controllersNS);
+		if(!$silent)
+			echo "Controllers directory is " . ROOT . $controllersNS . "\n";
+		return self::glob_recursive($controllersDir . DS . '*');
 	}
 
 	private static function initControllersCache(&$config) {
-		$controllersNS=$config["mvcNS"]["controllers"];
-		$controllersDir=ROOT . DS . str_replace("\\", DS, $controllersNS);
-		echo "Controllers directory is " . ROOT . $controllersNS . "\n";
-		$files=glob($controllersDir . DS . '*');
-		$namespace="";
-		if (isset($controllersNS) && $controllersNS !== "")
-			$namespace=$controllersNS . "\\";
+		$files=self::getControllerFiles($config);
 		foreach ( $files as $file ) {
 			if (is_file($file)) {
-				$controller=self::getClassNameFromFile($file, $namespace);
+				$controller=ClassUtils::getClassFullNameFromFile($file);
 				self::addControllerCache($controller);
 			}
 		}
@@ -205,8 +207,28 @@ class CacheManager {
 		self::$cache->store("controllers/routes", "return " . JArray::asPhpArray(self::$routes, "array") . ";");
 	}
 
+	public static function glob_recursive($pattern, $flags=0) {
+		$files=glob($pattern, $flags);
+		foreach ( glob(dirname($pattern) . '/*', GLOB_ONLYDIR | GLOB_NOSORT) as $dir ) {
+			$files=array_merge($files, self::glob_recursive($dir . '/' . basename($pattern), $flags));
+		}
+		return $files;
+	}
+
 	private static function register(AnnotationManager $annotationManager) {
-		$annotationManager->registry=array_merge($annotationManager->registry, [ 'id' => 'micro\annotations\IdAnnotation','manyToOne' => 'micro\annotations\ManyToOneAnnotation','oneToMany' => 'micro\annotations\OneToManyAnnotation','manyToMany' => 'micro\annotations\ManyToManyAnnotation','joinColumn' => 'micro\annotations\JoinColumnAnnotation','table' => 'micro\annotations\TableAnnotation','transient' => 'micro\annotations\TransientAnnotation','column' => 'micro\annotations\ColumnAnnotation','joinTable' => 'micro\annotations\JoinTableAnnotation','route' => 'micro\annotations\router\RouteAnnotation' ]);
+		$annotationManager->registry=array_merge($annotationManager->registry, [
+				'id' => 'micro\annotations\IdAnnotation',
+				'manyToOne' => 'micro\annotations\ManyToOneAnnotation',
+				'oneToMany' => 'micro\annotations\OneToManyAnnotation',
+				'manyToMany' => 'micro\annotations\ManyToManyAnnotation',
+				'joinColumn' => 'micro\annotations\JoinColumnAnnotation',
+				'table' => 'micro\annotations\TableAnnotation',
+				'transient' => 'micro\annotations\TransientAnnotation',
+				'column' => 'micro\annotations\ColumnAnnotation',
+				'joinTable' => 'micro\annotations\JoinTableAnnotation',
+				'route' => 'micro\annotations\router\RouteAnnotation',
+				'var' => 'mindplay\annotations\standard\VarAnnotation'
+		]);
 	}
 
 	public static function addAdminRoutes() {

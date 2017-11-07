@@ -19,29 +19,54 @@ use models\Site;
  * @property JsUtils $jquery
  */
 
-class ProfilController
+class ProfileController extends ControllerBase
 {
     public function index() {
-        $id = 1;
         $semantic=$this->jquery->semantic();
 
         $btHome=$semantic->htmlButton("btHome","");
-        $btHome->asIcon("home")->asLink("Main");
+        $btHome->asIcon("home")->asLink("");
 
-        $user = DAO::getOne("models\Utilisateur",$id );
-
-        $form=$semantic->dataForm("frmUserEdit", $user);
-
-        $form->setFields(["login","password","elementsMasques","fondEcran","couleur","ordre","statut","site"]);
-        $form->setCaptions(["Login","Password","Elements Masqués","Fond d'écran","Couleur","Ordre","Statut","Site"]);
-
-        $sites=DAO::getAll("models\Site");
-        $form->fieldAsDropDown("site",JArray::modelArray($sites,"getId","getNom"));
-
-        $status=DAO::getAll("models\Statut");
-        $form->fieldAsDropDown("statut",JArray::modelArray($status,"getId","getLibelle"));
-
+        $this->_printData();
         $this->jquery->compile($this->view);
         $this->loadview("profil/index.html");
+    }
+
+    private function _printData() {
+        $id = 1;
+        $semantic=$this->jquery->semantic();
+        $user = DAO::getOne("models\Utilisateur",$id );
+        $user->idSite=$user->getSite()->getId();
+        $user->idStatut=$user->getStatut()->getId();
+        $form=$semantic->dataForm("frmUser", $user);
+
+        $form->setFields(["login","password","elementsMasques","fondEcran","couleur","ordre","idStatut","idSite","submit"]);
+        $form->setCaptions(["Login","Password","Elements Masqués","Fond d'écran","Couleur","Ordre","Statut","Site","Valider"]);
+
+        $form->fieldAsSubmit("submit","blue","ProfileController/updateUser/".$id,"#msgUpdate");
+
+        $sites=DAO::getAll("models\Site");
+        $form->fieldAsDropDown("idSite",JArray::modelArray($sites,"getId","getNom"));
+
+        $status=DAO::getAll("models\Statut");
+        $form->fieldAsDropDown("idStatut",JArray::modelArray($status,"getId","getLibelle"));
+    }
+
+    public function printData(){
+        $this->_printData();
+        $this->jquery->compile($this->view);
+        $this->loadview("profil/index.html");
+    }
+
+    public function updateUser() {
+        $id=1;
+        $semantic=$this->jquery->semantic();
+        $user = DAO::getOne("models\Utilisateur",$id );
+
+        RequestUtils::setValuesToObject($user,$_POST);
+
+        if(DAO::update($user)){
+            echo $semantic->htmlMessage("msgUsers","".$user->getLogin()." modifié(e)");
+        }
     }
 }

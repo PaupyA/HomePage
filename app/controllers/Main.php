@@ -20,18 +20,12 @@ class Main extends ControllerBase {
     public function index() {
         $semantic = $this->jquery->semantic();
 
-        echo "</br ><h1> Accueil </h1> </br>";
-
         $btConnexion = $semantic->htmlButton("btConnexion", "Connexion");
         $btConnexion->asLink("ConnexionController");
-            
-        echo $btConnexion;
-        echo $this->jquery->compile($this->view);
-        echo "<div id='accueil'></div>";
-    }
 
-    public function connexion() {
         
-    }
 
+        $this->jquery->compile($this->view);
+        $this->loadView("index.html");
+    }
 }

@@ -13,7 +13,7 @@ class ControllerParser {
 	public function parse($controllerClass) {
 		$this->controllerClass=$controllerClass;
 		$reflect=new \ReflectionClass($controllerClass);
-		if (!$reflect->isAbstract()) {
+		if (!$reflect->isAbstract() && $reflect->isSubclassOf("micro\controllers\Controller")) {
 			$instance=new $controllerClass();
 			$annotsClass=Reflexion::getAnnotationClass($controllerClass, "@route");
 			if (\sizeof($annotsClass) > 0)
@@ -75,6 +75,7 @@ class ControllerParser {
 			$path=$pathParameters["path"];
 			$parameters=$pathParameters["parameters"];
 			$path=self::cleanpath($prefix, $path);
+			$controllerClass=ClassUtils::cleanClassname($controllerClass);
 			if (isset($routeArray["methods"]) && \is_array($routeArray["methods"])) {
 				self::createRouteMethod($result, $controllerClass, $path, $routeArray["methods"], $methodName, $parameters, $name, $cache, $duration);
 			} elseif (\is_array($httpMethods)) {

@@ -1,23 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Users</title>
-</head>
-<body>
+<div class='ui container'>
 
-<div class="ui container">
-    {{q["btHome"] | raw}}
-    {{q["buttons"] | raw}}
-    {{q["tblUsers"] | raw}}
-</div>
+    <br>
 
-<div class="formUsers">
-    {{q["frmUsersAdd"] |raw}}
-    {{q["frmUsersEdit"] |raw}}
+    {{q['btHome'] | raw}}
+    {{q['buttons'] | raw}}
+
+    <h1>Gestion des utilisateurs</h1>
+
+    <div id='divUsers'>
+        {{q["tblUsers"] | raw}}
+    </div>
+
 </div>
 
 {{script_foot | raw}}
-
-</body>
-</html>

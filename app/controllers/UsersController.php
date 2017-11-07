@@ -25,22 +25,20 @@ class UsersController extends ControllerBase
     public function index(){
         $semantic = $this->jquery->semantic();
 
-        echo "</br>";
-
         $btHome = $semantic->htmlButton("btHome", "");
         $btHome->asIcon("home")->asLink("BoardController");
 
         $bts = $semantic->htmlButtonGroups("buttons", ["Liste des utilisateurs", "Ajouter un utilisateur"]);
-        $bts->setPropertyValues("data-ajax", ["UsersController/all/", "UsersController/addUser/"]);
+        $bts->setPropertyValues("data-ajax", ["all/", "addUser/"]);
 
-        $bts->getOnClick("", "#formUsers", ["attr" => "data-ajax"]);
+        $bts->getOnClick("UsersController", "#divUsers", ["attr" => "data-ajax"]);
 
-        $this->all();
+        $this->_all();
         $this->jquery->compile($this->view);
         $this->loadView("users/index.html");
-    }            
+    }
 
-    public function all(){
+    private function _all(){
         $semantic=$this->jquery->semantic();
 
         $users=DAO::getAll("models\Utilisateur");
@@ -55,14 +53,17 @@ class UsersController extends ControllerBase
         $table->addDeleteButton(false);
 
         $table->setUrls(["edit"=>"UsersController/editUser","delete"=>"UsersController/deleteUser"]);
-        $table->setTargetSelector("#formUsers");
+        $table->setTargetSelector("#divUsers");
         $table->fieldAsHidden("id");
-
-        $table->compile($this->jquery);
-        $this->jquery->compile($this->view);
     }
 
-    public function addUser() {
+    public function all(){
+        $this->_all();
+        $this->jquery->compile($this->view);
+        $this->loadView("users/all.html");
+    }
+
+    private function _addUser(){
         $semantic=$this->jquery->semantic();
 
         $user=new Utilisateur();
@@ -72,7 +73,7 @@ class UsersController extends ControllerBase
         $form->setFields(["login","password","elementsMasques","fondEcran","couleur","ordre","statut","site","submit"]);
         $form->setCaptions(["Login","Password","Elements Masqués","Fond d'écran","Couleur","Ordre","Statut","Site","Valider"]);
 
-        $form->fieldAsSubmit("submit","green","UsersController/newUser/","#formUsers");
+        $form->fieldAsSubmit("submit","blue","UsersController/newUser/","#divUsers");
 
         $sites=DAO::getAll("models\Site");
         $form->fieldAsDropDown("site",JArray::modelArray($sites,"getId","getNom"));
@@ -80,7 +81,14 @@ class UsersController extends ControllerBase
         $status=DAO::getAll("models\Statut");
         $form->fieldAsDropDown("statut",JArray::modelArray($status,"getId","getLibelle"));
     }
+
+    public function addUser() {
+        $this->_addUser();
+        $this->jquery->compile($this->view);
+        $this->loadView("users/add.html");
+    }
     public function newUser() {
+        $semantic=$this->jquery->semantic();
         $user=new Utilisateur();
 
         RequestUtils::setValuesToObject($user,$_POST);
@@ -94,45 +102,61 @@ class UsersController extends ControllerBase
         $user->setStatut($statut);
 
         if(DAO::insert($user)){
-            echo "</br>". $user->getLogin()." ajouté";
+            echo $semantic->htmlMessage("#divUsers","".$user->getLogin()." ajouté(e)");
+            $this->all();
         }
     }
 
-    public function editUser($id){
+    private function _editUser($id){
         $semantic=$this->jquery->semantic();
 
         $user = DAO::getOne("models\Utilisateur",$id  );
-
+        $user->idSite=$user->getSite()->getId();
+        $user->idStatut=$user->getStatut()->getId();
         $form=$semantic->dataForm("frmUserEdit", $user);
 
-        $form->setFields(["login","password","elementsMasques","fondEcran","couleur","ordre","statut","site","submit"]);
+        $form->setFields(["login","password","elementsMasques","fondEcran","couleur","ordre","idStatut","idSite","submit"]);
         $form->setCaptions(["Login","Password","Elements Masqués","Fond d'écran","Couleur","Ordre","Statut","Site","Valider"]);
 
-        $form->fieldAsSubmit("submit","green","UsersController/updateUser/".$id,"#formUsers");
+        $form->fieldAsSubmit("submit","blue","UsersController/updateUser/".$id,"#divUsers");
 
         $sites=DAO::getAll("models\Site");
-        $form->fieldAsDropDown("site",JArray::modelArray($sites,"getId","getNom"));
+        $form->fieldAsDropDown("idSite",JArray::modelArray($sites,"getId","getNom"));
 
         $status=DAO::getAll("models\Statut");
-        $form->fieldAsDropDown("statut",JArray::modelArray($status,"getId","getLibelle"));
+        $form->fieldAsDropDown("idStatut",JArray::modelArray($status,"getId","getLibelle"));
+    }
+
+    public function editUser($id){
+        $this->_editUser($id);
+        $this->jquery->compile($this->view);
+        $this->loadView("users/edit.html");
     }
 
     public function updateUser($id) {
+        $semantic=$this->jquery->semantic();
         $user = DAO::getOne("models\Utilisateur",$id );
+        $site = DAO::getOne("models\Site", $_POST["idSite"]);
+        $statut = DAO::getOne("models\Statut", $_POST["idStatut"]);
+        $user->setSite($site);
+        $user->setStatut($statut);
 
         RequestUtils::setValuesToObject($user,$_POST);
 
         if(DAO::update($user)){
-            echo $user->getLogin()." modifié";
+            echo $semantic->htmlMessage("#divUsers","".$user->getLogin()." modifié(e)");
+            $this->all();
         }
 
     }
 
     public function deleteUser($id) {
+        $semantic=$this->jquery->semantic();
         $user = DAO::getOne("models\Utilisateur",$id );
 
         if(DAO::remove($user)) {
-            echo $user->getLogin()." supprimé";
+            echo $semantic->htmlMessage("#divUsers","".$user->getLogin()." supprimé(e)");
+            $this->all();
         }
     }
 }

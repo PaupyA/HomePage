@@ -23,7 +23,7 @@ class ConnexionController extends ControllerBase {
 
     public function index() {
         $this->jquery->compile($this->view);
-        $this->loadView("Connect/index.html");
+        $this->loadView("connexion/index.html");
     }
 
 }

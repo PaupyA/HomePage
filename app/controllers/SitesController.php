@@ -66,10 +66,9 @@ class SitesController extends ControllerBase
         $site=new Site();
 
         $form=$semantic->dataForm("frmSiteAdd", $site);
-        $form->setFields(["nom\n","latitude","longitude","ecart\n","fondEcran","couleur\n","ordre","options","submit"]);
+        $form->setFields(["nom\n","latitude","longitude","ecart\n","fondEcran","couleur\n","ordre","options\n","submit"]);
         $form->setCaptions(["Nom de l'établissement","Latitude","Longitude","Ecart","Fond d'écran","Couleur","Ordre","Options","Valider"]);
-        $form->fieldAsSubmit("submit","blue","SitesController/newSite/","#formSite");
-        $form->fieldAsImage("fondEcran");
+        $form->fieldAsSubmit("submit","blue","SitesController/newSite/","#divSites");
     }
 
     public function addSite() {
@@ -78,13 +77,14 @@ class SitesController extends ControllerBase
         $this->loadView("sites/add.html");
     }
     public function newSite() {
+        $semantic=$this->jquery->semantic();
         $site=new Site();
 
         RequestUtils::setValuesToObject($site,$_POST);
 
         if(DAO::insert($site)){
-            $this->loadView("sites/index.html");
-            echo $site->getNom()." ajouté";
+            echo $semantic->htmlMessage("#divSites","".$site->getNom()." ajouté");
+            $this->all();
         }
     }
 
@@ -95,10 +95,9 @@ class SitesController extends ControllerBase
 
         $form=$semantic->dataForm("frmSiteEdit", $site);
 
-        $form->setFields(["nom\n","latitude","longitude","ecart\n","fondEcran","couleur\n","ordre","options","submit"]);
+        $form->setFields(["nom\n","latitude","longitude","ecart\n","fondEcran","couleur\n","ordre","options\n","submit"]);
         $form->setCaptions(["Nom de l'établissement","Latitude","Longitude","Ecart","Fond d'écran","Couleur","Ordre","Options","Valider"]);
-        $form->fieldAsSubmit("submit","blue","SitesController/updateSite/".$id,"#formSite");
-        $form->fieldAsImage("fondEcran");
+        $form->fieldAsSubmit("submit","blue","SitesController/updateSite/".$id,"#divSites");
     }
 
     public function editSite($id) {
@@ -107,23 +106,26 @@ class SitesController extends ControllerBase
         $this->loadView("sites/edit.html");
     }
     public function updateSite($id) {
+        $semantic=$this->jquery->semantic();
         $site = DAO::getOne("models\Site",$id );
 
         RequestUtils::setValuesToObject($site,$_POST);
 
         if(DAO::update($site)){
-            $this->loadView("sites/index.html");
-            echo $site->getNom()." modifié";
+            echo $semantic->htmlMessage("#divSites","".$site->getNom()." modifié");
+            $this->all();
         }
 
     }
 
 
     public function deleteSite($id) {
+        $semantic=$this->jquery->semantic();
         $site = DAO::getOne("models\Site",$id );
 
         if(DAO::remove($site)) {
-            echo $site->getNom()." supprimé";
+            echo $semantic->htmlMessage("#divSites","".$site->getNom()." supprimé");
+            $this->all();
         }
     }
 
