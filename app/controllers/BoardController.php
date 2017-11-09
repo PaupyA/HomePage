@@ -31,6 +31,9 @@ class BoardController extends ControllerBase
         $btUsers=$semantic->htmlButton("btUsers","Gestion des utilisateurs");
         $btUsers->asLink("UsersController");
 
+        $btLinks=$semantic->htmlButton("btLinks","Gestion des liens");
+        $btLinks->asLink("LinksController");
+
         $this->jquery->compile($this->view);
         $this->loadView("board/index.html");
     }

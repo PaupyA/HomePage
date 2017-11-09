@@ -23,7 +23,9 @@ class Main extends ControllerBase {
         $btConnexion = $semantic->htmlButton("btConnexion", "Connexion");
         $btConnexion->asLink("ConnexionController");
 
-        
+        $search = $semantic->htmlSearch("search", "Recherche...","search");
+
+
 
         $this->jquery->compile($this->view);
         $this->loadView("index.html");
