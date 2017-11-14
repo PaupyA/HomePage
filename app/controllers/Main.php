@@ -20,12 +20,16 @@ class Main extends ControllerBase {
     public function index() {
         $semantic = $this->jquery->semantic();
 
-        $btConnexion = $semantic->htmlButton("btConnexion", "Connexion");
-        $btConnexion->asLink("ConnexionController");
+        $frm=$semantic->smallLogin("frm2-4");
+        $frm->fieldAsSubmit("submit","blue fluid","sTest/dePost","#frm2-4-submit");
+        $bt=$semantic->htmlButton("bt1","S'identifier","blue","$('#modal-frm2-4').modal('show');");
+        $bt->addIcon("sign in");
 
-        $search = $semantic->htmlSearch("search", "Recherche...","search");
+        echo $frm->asModal();
+        echo $bt;
 
-
+        $frmSearch=$semantic->htmlForm("frmSearch");
+        $frmSearch->addInput("search","","","","Rechercher...");
 
         $this->jquery->compile($this->view);
         $this->loadView("index.html");
