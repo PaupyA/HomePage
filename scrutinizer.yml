@@ -1,0 +1,11 @@
+filter:
+    excluded_paths:
+        - app/micro/
+        - vendor/
+    dependency_paths:
+        - app/micro/
+        - vendor/
+checks:
+    php:
+        code_rating: true
+        duplication: true
