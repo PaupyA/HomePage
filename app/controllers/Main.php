@@ -39,9 +39,6 @@ class Main extends ControllerBase {
         $frmSearch->addButton("submit", "Go");
         $frmSearch->setProperty("action", "https://www.google.fr/search?q");
         $frmSearch->setProperty("method", "get");
-
-        $this->jquery->compile($this->view);
-        $this->loadView("index.html");
     }
 
     public function bouton() {
