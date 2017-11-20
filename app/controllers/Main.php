@@ -42,18 +42,18 @@ class Main extends ControllerBase {
     }
 
     public function bouton() {
-        $semantic = $this->jquery->semantic();
-        if(!isset($_SESSION["user"])) {
-            $btLog = $semantic->htmlButton("bt1", "S'identifier", "blue", "$('#modal-frm2-4').modal('show');");
-            $btLog->addIcon("sign in");
-        }else{
-            $btDeco=$semantic->htmlButton("bt2","Se déconnecter", "blue");
-            $btDeco->addIcon("sign out");
-            $btDeco->asLink($this->deconnexion());
-            $btProfile=$semantic->htmlButton("bt3","Profil","blue");
-            $btProfile->addIcon("user");
-            $btProfile->asLink("ProfileController");
-        }
+            $semantic = $this->jquery->semantic();
+            if(!isset($_SESSION["user"])) {
+                $btLog = $semantic->htmlButton("btLogin", "S'identifier", "blue", "$('#modal-frm2-4').modal('show');");
+                $btLog->addIcon("sign in");
+            }else{
+                $btDeco=$semantic->htmlButtonGroups("btDeco",["Se déconnecter"]);
+                $btDeco->setPropertyValues("data-ajax", ["Main/deconnexion"]);
+                $btDeco->getOnClick("/","body",["attr"=>"data-ajax"]);
+                $btProfile=$semantic->htmlButton("btProfil","Profil","blue");
+                $btProfile->addIcon("user");
+                $btProfile->asLink("ProfileController");
+            }
     }
 
     public function connexion() {
@@ -63,6 +63,7 @@ class Main extends ControllerBase {
             if ($user->getPassword() == $_POST["password"]) {
                 $_SESSION["user"]=$user;
                 echo $semantic->htmlMessage("msg", "Utilisateur " . $_POST['login'] . " connecté");
+                $this->jquery->get("Main/index","body");
             } else {
                 echo $semantic->htmlMessage("msg", "Identifiant et/ou mot de passe incorrect.");
             }
@@ -73,5 +74,7 @@ class Main extends ControllerBase {
     public function deconnexion() {
         session_unset ();
         session_destroy ();
+        $this->jquery->get("Main/index","body");
+        echo $this->jquery->compile($this->view);
     }
 }
