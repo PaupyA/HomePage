@@ -20,8 +20,8 @@ class Main extends ControllerBase {
     public function index() {
         $semantic = $this->jquery->semantic();
 
-        $frm=$semantic->smallLogin("frm2-4");
-        $frm->fieldAsSubmit("submit","blue fluid","Main/connexion","#rep");
+        $frm = $semantic->smallLogin("frm2-4");
+        $frm->fieldAsSubmit("submit", "blue fluid", "Main/connexion", "#rep");
         echo $frm->asModal();
 
         $this->bouton();
@@ -39,42 +39,45 @@ class Main extends ControllerBase {
         $frmSearch->addButton("submit", "Go");
         $frmSearch->setProperty("action", "https://www.google.fr/search?q");
         $frmSearch->setProperty("method", "get");
+        $frmSearch->setProperty("target", "_blank");
     }
 
     public function bouton() {
-            $semantic = $this->jquery->semantic();
-            if(!isset($_SESSION["user"])) {
-                $btLog = $semantic->htmlButton("btLogin", "S'identifier", "blue", "$('#modal-frm2-4').modal('show');");
-                $btLog->addIcon("sign in");
-            }else{
-                $btDeco=$semantic->htmlButtonGroups("btDeco",["Se déconnecter"]);
-                $btDeco->setPropertyValues("data-ajax", ["Main/deconnexion"]);
-                $btDeco->getOnClick("/","body",["attr"=>"data-ajax"]);
-                $btProfile=$semantic->htmlButton("btProfil","Profil","blue");
-                $btProfile->addIcon("user");
-                $btProfile->asLink("ProfileController");
-            }
+        $semantic = $this->jquery->semantic();
+        if (!isset($_SESSION["user"])) {
+            $btLog = $semantic->htmlButton("btLogin", "S'identifier", "blue", "$('#modal-frm2-4').modal('show');");
+            $btLog->addIcon("sign in");
+        } else {
+            $btDeco = $semantic->htmlButtonGroups("btDeco", ["Se déconnecter"]);
+            $btDeco->setPropertyValues("data-ajax", ["Main/deconnexion"]);
+            $btDeco->getOnClick("/", "body", ["attr" => "data-ajax"]);
+            $btProfile = $semantic->htmlButton("btProfil", "Profil", "blue");
+            $btProfile->addIcon("user");
+            $btProfile->asLink("ProfileController");
+        }
     }
 
     public function connexion() {
-        $semantic=$this->jquery->semantic();
-        $user=DAO::getOne("models\Utilisateur","login='".$_POST['login']."'");
-        if(isset($user)) {
+        $semantic = $this->jquery->semantic();
+        $user = DAO::getOne("models\Utilisateur", "login='" . $_POST['login'] . "'");
+        if (isset($user)) {
             if ($user->getPassword() == $_POST["password"]) {
-                $_SESSION["user"]=$user;
+                $_SESSION["user"] = $user;
                 echo $semantic->htmlMessage("msg", "Utilisateur " . $_POST['login'] . " connecté");
-                $this->jquery->get("Main/index","body");
+                $this->jquery->get("Main/index", "body");
             } else {
                 echo $semantic->htmlMessage("msg", "Identifiant et/ou mot de passe incorrect.");
+                $this->jquery->get("Main/index", "body");
             }
             echo $this->jquery->compile($this->view);
         }
     }
 
     public function deconnexion() {
-        session_unset ();
-        session_destroy ();
-        $this->jquery->get("Main/index","body");
+        session_unset();
+        session_destroy();
+        $this->jquery->get("Main/index", "body");
         echo $this->jquery->compile($this->view);
     }
+
 }
