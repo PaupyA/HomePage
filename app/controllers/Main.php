@@ -33,11 +33,18 @@ class Main extends ControllerBase {
     }
 
     public function recherche() {
+        $yahoo = "https://fr.search.yahoo.com/search?p";
+        $google = "https://www.google.fr/search?q";
+        $bing = "https://www.bing.com/search?q";
+        $ecosia = "https://www.ecosia.org/search?q";
+        
+        
+        
         $semantic = $this->jquery->semantic();
         $frmSearch = $semantic->htmlForm("frmSearch");
         $frmSearch->addInput("q", "", "", "", "Rechercher...");
         $frmSearch->addButton("submit", "Go");
-        $frmSearch->setProperty("action", "https://www.google.fr/search?q");
+        $frmSearch->setProperty("action", "https://fr.search.yahoo.com/search?p");
         $frmSearch->setProperty("method", "get");
         $frmSearch->setProperty("target", "_blank");
     }
