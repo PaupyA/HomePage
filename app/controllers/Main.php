@@ -62,13 +62,15 @@ class Main extends ControllerBase {
         if(isset($user)) {
             if ($user->getPassword() == $_POST["password"]) {
                 $_SESSION["user"]=$user;
-                echo $semantic->htmlMessage("msg", "Utilisateur " . $_POST['login'] . " connecté");
                 $this->jquery->get("Main/index","body");
+                echo $semantic->htmlMessage("msg", "Utilisateur " . $_POST['login'] . " connecté");
             } else {
-                echo $semantic->htmlMessage("msg", "Identifiant et/ou mot de passe incorrect.");
+                $this->jquery->get("Main/index","body");
             }
-            echo $this->jquery->compile($this->view);
+        } else {
+            $this->jquery->get("Main/index","body");
         }
+        echo $this->jquery->compile($this->view);
     }
 
     public function deconnexion() {

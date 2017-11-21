@@ -33,12 +33,11 @@ class ProfileController extends ControllerBase
     }
 
     private function _printData() {
-        $user = $_SESSION['user'];
-        var_dump($user);
+        $id = $_SESSION['user']->getId();
         $semantic=$this->jquery->semantic();
-        $data = DAO::getOne("models\Utilisateur",$user );
-        $data->idSite=$user->getSite()->getId();
-        $data->idStatut=$user->getStatut()->getId();
+        $user = DAO::getOne("models\Utilisateur",$id );
+        $user->idSite=$user->getSite()->getId();
+        $user->idStatut=$user->getStatut()->getId();
         $form=$semantic->dataForm("frmUser", $user);
 
         $form->setFields(["login","password","elementsMasques","fondEcran","couleur","ordre","idStatut","idSite","submit"]);
