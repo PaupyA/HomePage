@@ -27,6 +27,13 @@ class ProfileController extends ControllerBase
         $btHome=$semantic->htmlButton("btHome","");
         $btHome->asIcon("home")->asLink("");
 
+        $btBack=$semantic->htmlButton("back","Informations");
+        $btBack->asLink("ProfileController");
+
+        $btLink=$semantic->htmlButtonGroups("btLink",["Liens perso"]);
+        $btLink->setPropertyValues("data-ajax", ["ProfileController/link"]);
+        $btLink->getOnClick("","#divUsers",["attr"=>"data-ajax"]);
+
         $this->_printData();
         $this->jquery->compile($this->view);
         $this->loadview("profil/index.html");
