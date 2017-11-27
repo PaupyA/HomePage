@@ -44,7 +44,10 @@ class Main extends ControllerBase {
         $frmSearch = $semantic->htmlForm("frmSearch");
         $frmSearch->addInput("q", "", "", "", "Rechercher...");
         $frmSearch->addButton("submit", "Go");
-        $frmSearch->setProperty("action", "https://fr.search.yahoo.com/search?p");
+        if ("q" == $yahoo) {
+            $moteur = $yahoo
+        };
+        $frmSearch->setProperty("action", "https://www.google.fr/search?q");
         $frmSearch->setProperty("method", "get");
         $frmSearch->setProperty("target", "_blank");
     }
