@@ -13,6 +13,7 @@ use micro\orm\DAO;
 use Ajax\JsUtils;
 use micro\utils\RequestUtils;
 use models\Site;
+use controllers\LinksController;
 
 /**
  * Controller UseController
@@ -26,6 +27,10 @@ class ProfileController extends ControllerBase
 
         $btHome=$semantic->htmlButton("btHome","");
         $btHome->asIcon("home")->asLink("");
+
+        $btLink=$semantic->htmlButtonGroups("btLink",["Liens perso"]);
+        $btLink->setPropertyValues("data-ajax", ["LinksController/perso"]);
+        $btLink->getOnClick("",".ui.container",["attr"=>"data-ajax"]);
 
         $this->_printData();
         $this->jquery->compile($this->view);

@@ -37,16 +37,16 @@ class Main extends ControllerBase {
         $google = "https://www.google.fr/search?q";
         $bing = "https://www.bing.com/search?q";
         $ecosia = "https://www.ecosia.org/search?q";
-        
-        
-        
+
         $semantic = $this->jquery->semantic();
         $frmSearch = $semantic->htmlForm("frmSearch");
         $frmSearch->addInput("q", "", "", "", "Rechercher...");
         $frmSearch->addButton("submit", "Go");
-        if ("q" == $yahoo) {
-            $moteur = $yahoo
-        };
+//        if ("q" == $yahoo) {
+//            $moteur = $yahoo
+//        } elseif ("q" == $google) {
+//            
+//    };
         $frmSearch->setProperty("action", "https://www.google.fr/search?q");
         $frmSearch->setProperty("method", "get");
         $frmSearch->setProperty("target", "_blank");

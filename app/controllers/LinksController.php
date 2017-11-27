@@ -61,6 +61,35 @@ class LinksController extends ControllerBase
         $this->loadView("links/all.html");
     }
 
+    private function _perso() {
+        $links=DAO::getAll("models\Lienweb");
+
+        $semantic=$this->jquery->semantic();
+
+        $btHome=$semantic->htmlButton("btHome","");
+        $btHome->asIcon("home")->asLink("");
+
+        $btBack=$semantic->htmlButton("back","Informations");
+        $btBack->asLink("ProfileController");
+
+        $table=$semantic->dataTable("tblLinks", "models\Lienweb", $links);
+
+        $table->setIdentifierFunction(function($i,$o){return $o->getId();});
+        $table->setFields(["libelle","url"]);
+        $table->setCaptions(["Site","URL"]);
+
+        $table->addEditButton(false);
+        $table->addDeleteButton(false);
+        $table->setUrls(["edit"=>"LinksController/editLink","delete"=>"LinksController/deleteLink"]);
+        $table->setTargetSelector("#divLink");
+    }
+
+    public function perso() {
+        $this->_perso();
+        $this->jquery->compile($this->view);
+        $this->loadView("profil/link.html");
+    }
+
     private function _addLink() {
         $semantic=$this->jquery->semantic();
 
