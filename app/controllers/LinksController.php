@@ -62,7 +62,7 @@ class LinksController extends ControllerBase
     }
 
     private function _perso() {
-        $links=DAO::getAll("models\Lienweb");
+        $links=DAO::getAll("models\Lienweb","idUtilisateur = ".$_SESSION['user']->getId());
 
         $semantic=$this->jquery->semantic();
 
@@ -80,7 +80,7 @@ class LinksController extends ControllerBase
 
         $table->addEditButton(false);
         $table->addDeleteButton(false);
-        $table->setUrls(["edit"=>"LinksController/editLink","delete"=>"LinksController/deleteLink"]);
+        $table->setUrls(["edit"=>"LinksController/editLinkPerso","delete"=>"LinksController/deleteLinkPerso"]);
         $table->setTargetSelector("#divLink");
     }
 
@@ -95,14 +95,18 @@ class LinksController extends ControllerBase
 
         $link=new Lienweb();
         $link->idSite="";
+        $link->idUtilisateur="";
 
         $form=$semantic->dataForm("frmLinkAdd", $link);
 
-        $form->setFields(["libelle\n","url","ordre","idSite\n","submit"]);
-        $form->setCaptions(["Site internet","URL","Ordre","Site","Valider"]);
+        $form->setFields(["libelle","url\n","ordre","idSite","idUtilisateur\n","submit"]);
+        $form->setCaptions(["Site internet","URL","Ordre","Site","Utilisateur","Valider"]);
 
         $sites=DAO::getAll("models\Site");
-        $form->fieldAsDropDown("idSite\n",JArray::modelArray($sites,"getId","getNom"));
+        $form->fieldAsDropDown("idSite",JArray::modelArray($sites,"getId","getNom"));
+
+        $users=DAO::getAll("models\Utilisateur");
+        $form->fieldAsDropDown("idUtilisateur\n",JArray::modelArray($users,"getId","getLogin"));
 
         $form->fieldAsSubmit("submit","blue","LinksController/newLink/","#divLink");
     }
@@ -119,8 +123,10 @@ class LinksController extends ControllerBase
         RequestUtils::setValuesToObject($link,$_POST);
 
         $site=DAO::getOne("models\Site",$_POST["idSite"]);
+        $user=DAO::getOne("models\Utilisateur",$_POST["idUtilisateur"]);
 
         $link->setSite($site);
+        $link->setUtilisateur($user);
 
         if(DAO::insert($link)){
             echo $semantic->htmlMessage("#divLink","".$link->getLibelle()." ajouté");
@@ -128,22 +134,72 @@ class LinksController extends ControllerBase
         }
     }
 
+    private function _editLinkPerso($id) {
+        $semantic=$this->jquery->semantic();
+
+        $link = DAO::getOne("models\Lienweb",$id  );
+        $link->idSite=$link->getSite()->getId();
+        $link->idUtilisateur=$link->getUtilisateur()->getId();
+        $form=$semantic->dataForm("frmLinkEdit", $link);
+        $form->setFields(["id","libelle","url\n","ordre","\nsubmit"]);
+        $form->setCaptions(["id","Site internet","URL","Ordre","Valider"]);
+
+        $form->fieldAsHidden("id");
+
+        $form->fieldAsSubmit("\nsubmit","blue","LinksController/updateLinkPerso/","#divLink");
+
+    }
+    public function editLinkPerso($id) {
+        $this->_editLinkPerso($id);
+        $this->jquery->compile($this->view);
+        $this->loadView("links/edit.html");
+    }
+    public function updateLinkPerso() {
+        $semantic=$this->jquery->semantic();
+
+        $link = DAO::getOne("models\Lienweb",$_POST["id"] );
+
+        RequestUtils::setValuesToObject($link,$_POST);
+
+        if(DAO::update($link)){
+            echo $semantic->htmlMessage("#divLink","".$link->getLibelle()." modifié");
+            $this->jquery->get("LinksController/perso",".ui.container");
+        }
+        echo $this->jquery->compile($this->view);
+    }
+    public function deleteLinkPerso($id) {
+        $semantic=$this->jquery->semantic();
+        $link = DAO::getOne("models\Lienweb",$id );
+
+        if(DAO::remove($link)) {
+            echo $semantic->htmlMessage("#divLink","".$link->getLibelle()." supprimé");
+            $this->jquery->get("LinksController/perso",".ui.container");
+        }
+        echo $this->jquery->compile($this->view);
+    }
+
+
     private function _editLink($id) {
         $semantic=$this->jquery->semantic();
 
         $link = DAO::getOne("models\Lienweb",$id  );
         $link->idSite=$link->getSite()->getId();
+        $link->idUtilisateur=$link->getUtilisateur()->getId();
         $form=$semantic->dataForm("frmLinkEdit", $link);
-        $form->setFields(["id","libelle\n","url","ordre","idSite\n","submit"]);
-        $form->setCaptions(["id","Site internet","URL","Ordre","Site","Valider"]);
-        $form->fieldAsHidden("id");
-        $sites=DAO::getAll("models\Site");
-        $form->fieldAsDropDown("idSite\n",JArray::modelArray($sites,"getId","getNom"));
+        $form->setFields(["id","libelle","url\n","ordre","idSite","idUtilisateur","\nsubmit"]);
+        $form->setCaptions(["id","Site internet","URL","Ordre","Site","Utilisateur","Valider"]);
 
-        $form->fieldAsSubmit("submit","blue","LinksController/updateLink/","#divLink");
+        $form->fieldAsHidden("id");
+
+        $sites=DAO::getAll("models\Site");
+        $form->fieldAsDropDown("idSite",JArray::modelArray($sites,"getId","getNom"));
+
+        $users=DAO::getAll("models\Utilisateur");
+        $form->fieldAsDropDown("idUtilisateur",JArray::modelArray($users,"getId","getLogin"));
+
+        $form->fieldAsSubmit("\nsubmit","blue","LinksController/updateLink/","#divLink");
 
     }
-
     public function editLink($id) {
         $this->_editLink($id);
         $this->jquery->compile($this->view);
@@ -151,9 +207,14 @@ class LinksController extends ControllerBase
     }
     public function updateLink() {
         $semantic=$this->jquery->semantic();
+
         $link = DAO::getOne("models\Lienweb",$_POST["id"] );
+
         $site = DAO::getOne("models\Site", $_POST["idSite"]);
+        $user = DAO::getOne("models\Utilisateur",$_POST["idUtilisateur"]);
+
         $link->setSite($site);
+        $link->setUtilisateur($user);
 
         RequestUtils::setValuesToObject($link,$_POST);
 

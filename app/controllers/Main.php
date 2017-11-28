@@ -80,6 +80,8 @@ class Main extends ControllerBase {
         echo $this->jquery->compile($this->view);
     }
 
+
+
     public function deconnexion() {
         session_unset();
         session_destroy();

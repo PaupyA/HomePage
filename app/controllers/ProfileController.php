@@ -22,6 +22,19 @@ use controllers\LinksController;
 
 class ProfileController extends ControllerBase
 {
+    public function initialize()
+    {
+        $fond="";
+        if(isset($_SESSION['user'])) {
+            $user=$_SESSION['user'];
+            $fond=$user->getFondEcran();
+        }
+
+        if(!RequestUtils::isAjax()) {
+            $this->loadView("main/vHeader.html", ["fond"=>$fond]);
+        }
+    }
+
     public function index() {
         $semantic=$this->jquery->semantic();
 
