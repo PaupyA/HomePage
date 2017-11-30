@@ -33,18 +33,17 @@ class Main extends ControllerBase {
     }
 
     public function recherche() {
-        $yahoo = "https://fr.search.yahoo.com/search?p";
-        $google = "https://www.google.fr/search?q";
-        $bing = "https://www.bing.com/search?q";
-        $ecosia = "https://www.ecosia.org/search?q";
-
-
+        
+        $user = $_SESSION['user'];
+        $idmoteur= $user->getidMoteur();
+        $moteur = DAO::getOne("models\Moteur", "id='".$idmoteur ."'");
 
         $semantic = $this->jquery->semantic();
         $frmSearch = $semantic->htmlForm("frmSearch");
-        $input=$frmSearch->addInput("q", "", "", "", "Rechercher...");
-        $input->addAction( "Go");
-        $frmSearch->setProperty("action", "https://www.google.fr/search?q");
+        $frmSearch->addInput("q", "", "", "", "Rechercher...");
+        $frmSearch->addButton("submit", "Go");
+        
+        $frmSearch->setProperty("action", $moteur->getCode());
         $frmSearch->setProperty("method", "get");
         $frmSearch->setProperty("target", "_blank");
     }
