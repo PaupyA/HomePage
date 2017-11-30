@@ -33,21 +33,21 @@ class Main extends ControllerBase {
     }
 
     public function recherche() {
-        $yahoo = "https://fr.search.yahoo.com/search?p";
-        $google = "https://www.google.fr/search?q";
-        $bing = "https://www.bing.com/search?q";
-        $ecosia = "https://www.ecosia.org/search?q";
-
+        //$yahoo = "https://fr.search.yahoo.com/search?p";
+        //$google = "https://www.google.fr/search?q";
+        //$bing = "https://www.bing.com/search?q";
+        //$ecosia = "https://www.ecosia.org/search?q";
+        
+        $user = $_SESSION['user'];
+        $idmoteur= $user->getidMoteur();
+        $moteur = DAO::getOne("models\Moteur", "id='".$idmoteur ."'");
+        
         $semantic = $this->jquery->semantic();
         $frmSearch = $semantic->htmlForm("frmSearch");
         $frmSearch->addInput("q", "", "", "", "Rechercher...");
         $frmSearch->addButton("submit", "Go");
-//        if ("q" == $yahoo) {
-//            $moteur = $yahoo
-//        } elseif ("q" == $google) {
-//            
-//    };
-        $frmSearch->setProperty("action", "https://www.google.fr/search?q");
+        
+        $frmSearch->setProperty("action", $moteur->getCode());
         $frmSearch->setProperty("method", "get");
         $frmSearch->setProperty("target", "_blank");
     }
@@ -72,15 +72,15 @@ class Main extends ControllerBase {
         $user = DAO::getOne("models\Utilisateur", "login='" . $_POST['login'] . "'");
         if (isset($user)) {
             if ($user->getPassword() == $_POST["password"]) {
-                $_SESSION["user"]=$user;
-                $this->jquery->get("Main/index","body");
+                $_SESSION["user"] = $user;
+                $this->jquery->get("Main/index", "body");
                 echo $semantic->htmlMessage("msg", "Utilisateur " . $_POST['login'] . " connecté");
             } else {
-                $this->jquery->get("Main/index","body");
+                $this->jquery->get("Main/index", "body");
                 echo $semantic->htmlMessage("msg", "Identifiant et/ou mot de passe incorrect.");
             }
         } else {
-            $this->jquery->get("Main/index","body");
+            $this->jquery->get("Main/index", "body");
         }
         echo $this->jquery->compile($this->view);
     }
