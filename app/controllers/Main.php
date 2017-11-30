@@ -33,19 +33,29 @@ class Main extends ControllerBase {
     }
 
     public function recherche() {
-        
-        $user = $_SESSION['user'];
-        $idmoteur= $user->getidMoteur();
-        $moteur = DAO::getOne("models\Moteur", "id='".$idmoteur ."'");
+        if (!isset($_SESSION["user"])) {
+            $semantic = $this->jquery->semantic();
+            $frmSearch = $semantic->htmlForm("frmSearch");
+            $input=$frmSearch->addInput("q", "", "", "", "Rechercher...");
+            $input->addAction( "Go");
+            $frmSearch->setProperty("action", "https://www.google.fr/search?q");
+            $frmSearch->setProperty("method", "get");
+            $frmSearch->setProperty("target", "_blank");
+        } else {
+            $IdUser = $_SESSION["user"]->getId();
+            $user = DAO::getOne("models\Utilisateur", $IdUser);
+            $IdMoteur = $user->getMoteurs();
+            var_dump($IdMoteur);
+            $moteur = DAO::getOne("models\Moteur", "id='" . $IdMoteur . "'");
 
-        $semantic = $this->jquery->semantic();
-        $frmSearch = $semantic->htmlForm("frmSearch");
-        $frmSearch->addInput("q", "", "", "", "Rechercher...");
-        $frmSearch->addButton("submit", "Go");
-        
-        $frmSearch->setProperty("action", $moteur->getCode());
-        $frmSearch->setProperty("method", "get");
-        $frmSearch->setProperty("target", "_blank");
+            $semantic = $this->jquery->semantic();
+            $frmSearch = $semantic->htmlForm("frmSearch");
+            $input=$frmSearch->addInput("q", "", "", "", "Rechercher...");
+            $input->addAction("Go");
+            $frmSearch->setProperty("action", $moteur->getCode());
+            $frmSearch->setProperty("method", "get");
+            $frmSearch->setProperty("target", "_blank");
+        }
     }
 
     public function bouton() {
