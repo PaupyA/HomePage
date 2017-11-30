@@ -37,7 +37,9 @@ class Main extends ControllerBase {
         $google = "https://www.google.fr/search?q";
         $bing = "https://www.bing.com/search?q";
         $ecosia = "https://www.ecosia.org/search?q";
-        
+
+
+
         $semantic = $this->jquery->semantic();
         $frmSearch = $semantic->htmlForm("frmSearch");
         $input=$frmSearch->addInput("q", "", "", "", "Rechercher...");
