@@ -17,7 +17,7 @@ class OrmUtils {
 
 	public static function getModelMetadata($className) {
 		if (!isset(self::$modelsMetadatas[$className])) {
-			self::$modelsMetadatas[$className]=CacheManager::createOrmModelCache($className);
+			self::$modelsMetadatas[$className]=CacheManager::getOrmModelCache($className);
 		}
 		return self::$modelsMetadatas[$className];
 	}
@@ -47,7 +47,19 @@ class OrmUtils {
 		return $ret;
 	}
 
+	public static function getFieldNames($model){
+		$fields=self::getAnnotationInfo($model, "#fieldNames");
+		$result=[];
+		$serializables=self::getSerializableFields($model);
+		foreach ($fields as $member=>$field){
+			if(\array_search($member, $serializables)!==false)
+				$result[$field]=$member;
+		}
+		return $result;
+	}
+
 	public static function getTableName($class) {
+		if(isset(self::getModelMetadata($class)["#tableName"]))
 		return self::getModelMetadata($class)["#tableName"];
 	}
 

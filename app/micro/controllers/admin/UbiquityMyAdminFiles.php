@@ -16,6 +16,18 @@ class UbiquityMyAdminFiles {
 		return "Admin/routes/index.html";
 	}
 
+	public function getViewRestIndex(){
+		return "Admin/rest/index.html";
+	}
+
+	public function getViewLogsIndex(){
+		return "Admin/logs/index.html";
+	}
+
+	public function getViewRestFormTester(){
+		return "Admin/rest/formTester.html";
+	}
+
 	public function getViewCacheIndex(){
 		return "Admin/cache/index.html";
 	}
@@ -42,5 +54,9 @@ class UbiquityMyAdminFiles {
 
 	public function getViewHeader(){
 		return "Admin/main/vHeader.html";
+	}
+
+	public function getViewClassesDagram(){
+		return "Admin/data/diagClasses.html";
 	}
 }

@@ -43,10 +43,8 @@ class Main extends ControllerBase {
             $frmSearch->setProperty("target", "_blank");
         } else {
             $IdUser = $_SESSION["user"]->getId();
-            $user = DAO::getOne("models\Utilisateur", $IdUser);
-            $IdMoteur = $user->getMoteurs();
-            var_dump($IdMoteur);
-            $moteur = DAO::getOne("models\Moteur", "id='" . $IdMoteur . "'");
+            $user = DAO::getOne("models\Utilisateur", $IdUser,true);
+            $moteur = $user->getMoteur();
 
             $semantic = $this->jquery->semantic();
             $frmSearch = $semantic->htmlForm("frmSearch");
@@ -89,6 +87,11 @@ class Main extends ControllerBase {
             $this->jquery->get("Main/index","body");
         }
         echo $this->jquery->compile($this->view);
+    }
+
+    public function test(){
+        $user=DAO::getOne("models\\Utilisateur",4,true,true);
+        var_dump($user->getMoteur());
     }
 
 

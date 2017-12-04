@@ -7,6 +7,7 @@ use micro\controllers\Startup;
 use micro\cache\ClassUtils;
 use micro\controllers\Router;
 use micro\utils\StrUtils;
+use micro\orm\parser\Reflexion;
 
 class ControllerAction {
 	private $controller;
@@ -57,17 +58,20 @@ class ControllerAction {
 		$result=[];
 		$config=Startup::getConfig();
 
-		$files=CacheManager::getControllerFiles($config,true);
+		$files=CacheManager::getControllersFiles($config,true);
+		$restCtrls=CacheManager::getRestCache();
 		foreach ( $files as $file ) {
 			if (is_file($file)) {
 				$controllerClass=ClassUtils::getClassFullNameFromFile($file);
-				$reflect=new \ReflectionClass($controllerClass);
-				if (!$reflect->isAbstract() && $reflect->isSubclassOf("micro\controllers\Controller")) {
-					$methods=$reflect->getMethods(\ReflectionMethod::IS_PUBLIC);
-					foreach ( $methods as $method ) {
-						$r=self::scanMethod($controllerClass, $method);
-						if(isset($r))
-							$result[]=$r;
+				if(isset($restCtrls[$controllerClass])===false){
+					$reflect=new \ReflectionClass($controllerClass);
+					if (!$reflect->isAbstract() && $reflect->isSubclassOf("micro\controllers\Controller")) {
+						$methods=$reflect->getMethods(\ReflectionMethod::IS_PUBLIC);
+						foreach ( $methods as $method ) {
+							$r=self::scanMethod($controllerClass, $method);
+							if(isset($r))
+								$result[]=$r;
+						}
 					}
 				}
 			}
@@ -82,7 +86,7 @@ class ControllerAction {
 			$parameters=$method->getParameters();
 			$defaults=[];
 			foreach ($parameters as $param){
-				if($param->isOptional()){
+				if($param->isOptional() && !$param->isVariadic()){
 					$defaults[$param->name]=$param->getDefaultValue();
 				}
 			}
@@ -139,5 +143,9 @@ class ControllerAction {
 	public function getPath(){
 		$reflect=new \ReflectionClass($this->controller);
 		return $reflect->getShortName()."/".$this->action;
+	}
+
+	public function getId(){
+		return $this->getPath();
 	}
 }

@@ -1,57 +1,5 @@
 [
     {
-        "name": "mindplay/annotations",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/php-annotations/php-annotations.git",
-            "reference": "85d060e0397a64000ad37cd3842f07c50ca78405"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/php-annotations/php-annotations/zipball/85d060e0397a64000ad37cd3842f07c50ca78405",
-            "reference": "85d060e0397a64000ad37cd3842f07c50ca78405",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "require-dev": {
-            "phpunit/php-code-coverage": "~1.2.1",
-            "phpunit/php-file-iterator": ">=1.3.0@stable"
-        },
-        "time": "2017-06-19T20:19:49+00:00",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.3.x-dev"
-            }
-        },
-        "installation-source": "source",
-        "autoload": {
-            "psr-4": {
-                "mindplay\\annotations\\": "src\\annotations"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "LGPL-3.0+"
-        ],
-        "authors": [
-            {
-                "name": "Rasmus Schultz",
-                "email": "rasmus@mindplay.dk"
-            }
-        ],
-        "description": "Industrial-strength annotations for PHP",
-        "homepage": "http://blog.mindplay.dk/",
-        "keywords": [
-            "annotations",
-            "framework"
-        ]
-    },
-    {
         "name": "frameworks/jquery",
         "version": "2.1.4",
         "version_normalized": "2.1.4.0",
@@ -150,12 +98,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/phpMv/phpMv-UI.git",
-            "reference": "db4c081abb0f49a89f24ed073f82ec2591bfd771"
+            "reference": "ef9455ddff198f5b455c340472340cee01ca8326"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/phpMv/phpMv-UI/zipball/db4c081abb0f49a89f24ed073f82ec2591bfd771",
-            "reference": "db4c081abb0f49a89f24ed073f82ec2591bfd771",
+            "url": "https://api.github.com/repos/phpMv/phpMv-UI/zipball/ef9455ddff198f5b455c340472340cee01ca8326",
+            "reference": "ef9455ddff198f5b455c340472340cee01ca8326",
             "shasum": ""
         },
         "require": {
@@ -167,7 +115,7 @@
             "semantic/ui": "~2.2.1",
             "twitter/bootstrap": "~3.3"
         },
-        "time": "2017-11-07T02:24:46+00:00",
+        "time": "2017-11-27T02:20:17+00:00",
         "type": "phpmv-ui",
         "installation-source": "source",
         "autoload": {
@@ -199,6 +147,58 @@
             "symfony",
             "twitter bootstrap",
             "yii"
+        ]
+    },
+    {
+        "name": "mindplay/annotations",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/php-annotations/php-annotations.git",
+            "reference": "85d060e0397a64000ad37cd3842f07c50ca78405"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/php-annotations/php-annotations/zipball/85d060e0397a64000ad37cd3842f07c50ca78405",
+            "reference": "85d060e0397a64000ad37cd3842f07c50ca78405",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "require-dev": {
+            "phpunit/php-code-coverage": "~1.2.1",
+            "phpunit/php-file-iterator": ">=1.3.0@stable"
+        },
+        "time": "2017-06-19T20:19:49+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.3.x-dev"
+            }
+        },
+        "installation-source": "source",
+        "autoload": {
+            "psr-4": {
+                "mindplay\\annotations\\": "src\\annotations"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "LGPL-3.0+"
+        ],
+        "authors": [
+            {
+                "name": "Rasmus Schultz",
+                "email": "rasmus@mindplay.dk"
+            }
+        ],
+        "description": "Industrial-strength annotations for PHP",
+        "homepage": "http://blog.mindplay.dk/",
+        "keywords": [
+            "annotations",
+            "framework"
         ]
     }
 ]

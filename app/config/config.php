@@ -2,6 +2,7 @@
 return array(
 		"siteUrl"=>"http://127.0.0.1/homepage/",
 		"database"=>[
+		        "type"=>"mysql",
 				"dbName"=>"homepage",
 				"serverName"=>"127.0.0.1",
 				"port"=>"3306",
@@ -14,7 +15,7 @@ return array(
 		"templateEngine"=>'micro\views\engine\Twig',
 		"templateEngineOptions"=>array("cache"=>false),
 		"test"=>false,
-		"debug"=>false,
+		"debug"=>true,
 		"di"=>["jquery"=>function(){
 							$jquery=new Ajax\php\micro\JsUtils(["defer"=>true]);
 							$jquery->semantic(new Ajax\Semantic());
