@@ -12,6 +12,7 @@ use micro\cache\database\DbCache;
  *
  */
 class Database {
+	private $dbType;
 	private $serverName;
 	private $port;
 	private $dbName;
@@ -29,7 +30,8 @@ class Database {
 	 * @param string $user
 	 * @param string $password
 	 */
-	public function __construct($dbName, $serverName="localhost", $port="3306", $user="root", $password="", $cache=false) {
+	public function __construct($dbType,$dbName, $serverName="localhost", $port="3306", $user="root", $password="", $cache=false) {
+		$this->dbType=$dbType;
 		$this->dbName=$dbName;
 		$this->serverName=$serverName;
 		$this->port=$port;
@@ -44,13 +46,9 @@ class Database {
 	 * Réalise la connexion à la base de données
 	 */
 	public function connect() {
-		try {
-			$this->pdoObject=new \PDO('mysql:host=' . $this->serverName . ';dbname=' . $this->dbName . ';port:' . $this->port, $this->user, $this->password);
-			$this->pdoObject->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-			$this->pdoObject->exec("SET CHARACTER SET utf8");
-		} catch ( \PDOException $e ) {
-			print "Error!: " . $e->getMessage() . "<br/>";
-		}
+		$this->pdoObject=new \PDO($this->dbType.':host=' . $this->serverName . ';dbname=' . $this->dbName . ';port:' . $this->port, $this->user, $this->password);
+		$this->pdoObject->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+		$this->pdoObject->exec("SET CHARACTER SET utf8");
 	}
 
 	/**
@@ -136,5 +134,9 @@ class Database {
 		$sql='SHOW TABLES';
 		$query=$this->pdoObject->query($sql);
 		return $query->fetchAll(\PDO::FETCH_COLUMN);
+	}
+
+	public function isConnected(){
+		return ($this->pdoObject!==null && $this->pdoObject instanceof \PDO);
 	}
 }

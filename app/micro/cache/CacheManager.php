@@ -5,95 +5,48 @@ namespace micro\cache;
 use mindplay\annotations\Annotations;
 use mindplay\annotations\AnnotationCache;
 use mindplay\annotations\AnnotationManager;
-use micro\orm\parser\ModelParser;
-use micro\utils\JArray;
 use micro\controllers\Router;
-use micro\controllers\Startup;
+use micro\utils\FsUtils;
+use micro\cache\traits\RouterCacheTrait;
+use micro\cache\traits\ModelsCacheTrait;
+use micro\cache\traits\RestCacheTrait;
 
 class CacheManager {
+	use RouterCacheTrait,ModelsCacheTrait,RestCacheTrait;
+
 	public static $cache;
-	private static $routes=[ ];
 	private static $cacheDirectory;
-	private static $expiredRoutes=[ ];
 
 	public static function start(&$config) {
 		self::$cacheDirectory=self::initialGetCacheDirectory($config);
 		$cacheDirectory=ROOT . DS . self::$cacheDirectory;
 		Annotations::$config['cache']=new AnnotationCache($cacheDirectory . '/annotations');
 		self::register(Annotations::getManager());
-		self::$cache=new ArrayCache($cacheDirectory, ".cache");
+		self::getCacheInstance($config, $cacheDirectory, ".cache");
 	}
 
 	public static function startProd(&$config) {
 		self::$cacheDirectory=self::initialGetCacheDirectory($config);
 		$cacheDirectory=ROOT . DS . self::$cacheDirectory;
-		self::$cache=new ArrayCache($cacheDirectory, ".cache");
+		self::getCacheInstance($config,$cacheDirectory, ".cache");
 	}
 
-	public static function getControllerCache() {
-		if (self::$cache->exists("controllers/routes"))
-			return self::$cache->fetch("controllers/routes");
-		return [ ];
-	}
-
-	public static function getRouteCache($routePath, $duration) {
-		$key=self::getRouteKey($routePath);
-
-		if (self::$cache->exists("controllers/" . $key) && !self::expired($key, $duration)) {
-			$response=self::$cache->file_get_contents("controllers/" . $key);
-			return $response;
-		} else {
-			$response=Startup::runAsString($routePath);
-			return self::storeRouteResponse($key, $response);
+	protected static function getCacheInstance(&$config,$cacheDirectory,$postfix){
+		$cacheSystem='micro\cache\system\ArrayCache';
+		if(!isset(self::$cache)){
+			if(isset($config["cache"]["system"])){
+				$cacheSystem=$config["cache"]["system"];
+			}
+			self::$cache=new $cacheSystem($cacheDirectory,$postfix);
 		}
-	}
-
-	public static function expired($key, $duration) {
-		return self::$cache->expired("controllers/" . $key, $duration) === true || \array_key_exists($key, self::$expiredRoutes);
-	}
-
-	public static function isExpired($path,$duration){
-		$route=Router::getRoute($path,false);
-		if($route!==false && \is_array($route)){
-			return self::expired(self::getRouteKey($route), $duration);
-		}
-		return true;
-	}
-
-	public static function setExpired($routePath, $expired=true) {
-		$key=self::getRouteKey($routePath);
-		self::setKeyExpired($key, $expired);
-	}
-
-	private static function setKeyExpired($key, $expired=true) {
-		if ($expired) {
-			self::$expiredRoutes[$key]=true;
-		} else {
-			unset(self::$expiredRoutes[$key]);
-		}
-	}
-
-	public static function setRouteCache($routePath) {
-		$key=self::getRouteKey($routePath);
-		$response=Startup::runAsString($routePath);
-		return self::storeRouteResponse($key, $response);
-	}
-
-	private static function storeRouteResponse($key, $response) {
-		self::setKeyExpired($key, false);
-		self::$cache->store("controllers/" . $key, $response, false);
-		return $response;
-	}
-
-	private static function getRouteKey($routePath) {
-		return "path" . \md5(\implode("", $routePath));
+		return self::$cache;
 	}
 
 	private static function initialGetCacheDirectory(&$config) {
-		$cacheDirectory=@$config["cacheDirectory"];
+		$cacheDirectory=@$config["cache"]["directory"];
 		if (!isset($cacheDirectory)) {
-			$config["cacheDirectory"]="cache/";
-			$cacheDirectory=$config["cacheDirectory"];
+			$config["cache"]["directory"]="cache/";
+			$cacheDirectory=$config["cache"]["directory"];
 		}
 		return $cacheDirectory;
 	}
@@ -102,40 +55,27 @@ class CacheManager {
 		return self::$cacheDirectory;
 	}
 
-	public static function createOrmModelCache($className) {
-		$key=\str_replace("\\", DIRECTORY_SEPARATOR, $className);
-		if (!self::$cache->exists($key)) {
-			$p=new ModelParser();
-			$p->parse($className);
-			self::$cache->store($key, $p->__toString());
+	public static function checkCache(&$config,$silent=false) {
+		$dirs=self::getCacheDirectories($config,$silent);
+		foreach ($dirs as $dir){
+			self::safeMkdir($dir);
 		}
-		return self::$cache->fetch($key);
+		return $dirs;
 	}
 
-	private static function addControllerCache($classname) {
-		$parser=new ControllerParser();
-		try {
-			$parser->parse($classname);
-			self::$routes=\array_merge($parser->asArray(), self::$routes);
-		} catch ( \Exception $e ) {
-			// Nothing to do
-		}
-	}
-
-	public static function checkCache(&$config) {
+	public static function getCacheDirectories(&$config,$silent=false){
 		$cacheDirectory=self::initialGetCacheDirectory($config);
+		if(!$silent){
+			echo "cache directory is " . FsUtils::cleanPathname(ROOT . DS . $cacheDirectory) . "\n";
+		}
 		$modelsDir=str_replace("\\", DS, $config["mvcNS"]["models"]);
 		$controllersDir=str_replace("\\", DS, $config["mvcNS"]["controllers"]);
-		echo "cache directory is " . ROOT . DS . $cacheDirectory . "\n";
 		$annotationCacheDir=ROOT . DS . $cacheDirectory . DS . "annotations";
 		$modelsCacheDir=ROOT . DS . $cacheDirectory . DS . $modelsDir;
 		$queriesCacheDir=ROOT . DS . $cacheDirectory . DS . "queries";
 		$controllersCacheDir=ROOT . DS . $cacheDirectory . DS . $controllersDir;
-		self::safeMkdir($annotationCacheDir);
-		self::safeMkdir($modelsCacheDir);
-		self::safeMkdir($controllersCacheDir);
-		self::safeMkdir($queriesCacheDir);
-		return [ "annotations" => $annotationCacheDir,"models" => $modelsCacheDir,"controllers" => $controllersCacheDir,"queries" => $queriesCacheDir ];
+		$viewsCacheDir=ROOT . DS . $cacheDirectory . DS . "views";
+		return [ "annotations" => $annotationCacheDir,"models" => $modelsCacheDir,"controllers" => $controllersCacheDir,"queries" => $queriesCacheDir ,"views"=>$viewsCacheDir];
 	}
 
 	private static function safeMkdir($dir) {
@@ -143,76 +83,36 @@ class CacheManager {
 			return mkdir($dir, 0777, true);
 	}
 
-	private static function deleteAllFilesFromFolder($folder) {
-		$files=glob($folder . '/*');
-		foreach ( $files as $file ) {
-			if (is_file($file))
-				unlink($file);
-		}
-	}
-
 	public static function clearCache(&$config, $type="all") {
 		$cacheDirectories=self::checkCache($config);
-		if ($type === "all") {
-			self::deleteAllFilesFromFolder($cacheDirectories["annotations"]);
+		$cacheDirs=["annotations","controllers","models","queries","views"];
+		foreach ($cacheDirs as $typeRef){
+			self::_clearCache($cacheDirectories, $type, $typeRef);
 		}
-		if ($type === "all" || $type === "controllers")
-			self::deleteAllFilesFromFolder($cacheDirectories["controllers"]);
-		if ($type === "all" || $type === "models")
-			self::deleteAllFilesFromFolder($cacheDirectories["models"]);
-		if ($type === "all" || $type === "queries")
-			self::deleteAllFilesFromFolder($cacheDirectories["queries"]);
 	}
 
-	public static function initCache(&$config, $type="all") {
-		self::checkCache($config);
+	private static function _clearCache($cacheDirectories,$type,$typeRef){
+		if ($type === "all" || $type === $typeRef)
+			FsUtils::deleteAllFilesFromFolder($cacheDirectories[$typeRef]);
+	}
+
+	public static function initCache(&$config, $type="all",$silent=false) {
+		self::checkCache($config,$silent);
 		self::start($config);
 		if ($type === "all" || $type === "models")
-			self::initModelsCache($config);
+			self::initModelsCache($config,false,$silent);
 		if ($type === "all" || $type === "controllers")
-			self::initControllersCache($config);
+			self::initRouterCache($config,$silent);
+		if ($type === "all" || $type === "rest")
+			self::initRestCache($config,$silent);
 	}
 
-	private static function initModelsCache(&$config) {
-		$modelsNS=$config["mvcNS"]["models"];
-		$modelsDir=ROOT . DS . str_replace("\\", DS, $modelsNS);
-		echo "Models directory is " . ROOT . $modelsNS . "\n";
-		$files=self::glob_recursive($modelsDir . DS . '*');
-		foreach ( $files as $file ) {
-			if (is_file($file)) {
-				$model=ClassUtils::getClassFullNameFromFile($file);
-				new $model();
-			}
-		}
-	}
-
-	public static function getControllerFiles(&$config,$silent=false){
-		$controllersNS=$config["mvcNS"]["controllers"];
-		$controllersDir=ROOT . DS . str_replace("\\", DS, $controllersNS);
+	protected static function _getFiles(&$config,$type,$silent=false){
+		$typeNS=$config["mvcNS"][$type];
+		$typeDir=ROOT . DS . str_replace("\\", DS, $typeNS);
 		if(!$silent)
-			echo "Controllers directory is " . ROOT . $controllersNS . "\n";
-		return self::glob_recursive($controllersDir . DS . '*');
-	}
-
-	private static function initControllersCache(&$config) {
-		$files=self::getControllerFiles($config);
-		foreach ( $files as $file ) {
-			if (is_file($file)) {
-				$controller=ClassUtils::getClassFullNameFromFile($file);
-				self::addControllerCache($controller);
-			}
-		}
-		if ($config["debug"])
-			self::addAdminRoutes();
-		self::$cache->store("controllers/routes", "return " . JArray::asPhpArray(self::$routes, "array") . ";");
-	}
-
-	public static function glob_recursive($pattern, $flags=0) {
-		$files=glob($pattern, $flags);
-		foreach ( glob(dirname($pattern) . '/*', GLOB_ONLYDIR | GLOB_NOSORT) as $dir ) {
-			$files=array_merge($files, self::glob_recursive($dir . '/' . basename($pattern), $flags));
-		}
-		return $files;
+			echo \ucfirst($type)." directory is " . ROOT . $typeNS . "\n";
+		return FsUtils::glob_recursive($typeDir . DS . '*');
 	}
 
 	private static function register(AnnotationManager $annotationManager) {
@@ -227,22 +127,10 @@ class CacheManager {
 				'column' => 'micro\annotations\ColumnAnnotation',
 				'joinTable' => 'micro\annotations\JoinTableAnnotation',
 				'route' => 'micro\annotations\router\RouteAnnotation',
-				'var' => 'mindplay\annotations\standard\VarAnnotation'
+				'var' => 'mindplay\annotations\standard\VarAnnotation',
+				'yuml' => 'micro\annotations\YumlAnnotation',
+				'rest' => 'micro\annotations\rest\RestAnnotation',
+				'authorization' => 'micro\annotations\rest\AuthorizationAnnotation'
 		]);
-	}
-
-	public static function addAdminRoutes() {
-		self::addControllerCache("micro\controllers\Admin");
-	}
-
-	public static function getRoutes() {
-		$result=self::getControllerCache();
-		return $result;
-	}
-
-	public static function addRoute($path, $controller, $action="index", $methods=null, $name="") {
-		$controllerCache=self::getControllerCache();
-		Router::addRouteToRoutes($controllerCache, $path, $controller, $action, $methods, $name);
-		self::$cache->store("controllers/routes", "return " . JArray::asPhpArray($controllerCache, "array") . ";");
 	}
 }

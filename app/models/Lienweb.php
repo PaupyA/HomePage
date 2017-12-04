@@ -3,30 +3,40 @@ namespace models;
 class Lienweb{
 	/**
 	 * @id
+	 * @column("name"=>"id","nullable"=>"","dbType"=>"int(11)")
 	*/
 	private $id;
 
+	/**
+	 * @column("name"=>"libelle","nullable"=>1,"dbType"=>"varchar(150)")
+	*/
 	private $libelle;
 
+	/**
+	 * @column("name"=>"url","nullable"=>1,"dbType"=>"varchar(255)")
+	*/
 	private $url;
 
+	/**
+	 * @column("name"=>"ordre","nullable"=>1,"dbType"=>"int(11)")
+	*/
 	private $ordre;
 
 	/**
 	 * @manyToOne
-	 * @joinColumn("className"=>"models\Etablissement","name"=>"idEtablissement","nullable"=>false)
+	 * @joinColumn("className"=>"models\\Etablissement","name"=>"idEtablissement","nullable"=>"")
 	*/
 	private $etablissement;
 
 	/**
 	 * @manyToOne
-	 * @joinColumn("className"=>"models\Site","name"=>"idSite","nullable"=>false)
+	 * @joinColumn("className"=>"models\\Site","name"=>"idSite","nullable"=>"")
 	*/
 	private $site;
 
 	/**
 	 * @manyToOne
-	 * @joinColumn("className"=>"models\Utilisateur","name"=>"idUtilisateur","nullable"=>false)
+	 * @joinColumn("className"=>"models\\Utilisateur","name"=>"idUtilisateur","nullable"=>"")
 	*/
 	private $utilisateur;
 
@@ -84,6 +94,10 @@ class Lienweb{
 
 	 public function setUtilisateur($utilisateur){
 		$this->utilisateur=$utilisateur;
+	}
+
+	 public function __toString(){
+		return $this->id;
 	}
 
 }

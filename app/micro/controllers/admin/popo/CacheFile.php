@@ -2,7 +2,7 @@
 
 namespace micro\controllers\admin\popo;
 
-use micro\cache\CacheManager;
+use micro\utils\FsUtils;
 
 class CacheFile {
 	private $type;
@@ -11,20 +11,23 @@ class CacheFile {
 	private $size;
 	private $file;
 
-	public function __construct($type="",$name="",$timestamp=0,$size=0,$file=""){
+	public function __construct($type="",$name="",$timestamp=0,$size=0,$fileKey=""){
 		$this->type=$type;
 		$this->name=$name;
 		$this->timestamp=$timestamp;
 		$this->size=$size;
-		$this->file=$file;
+		$this->file=$fileKey;
 	}
 
-	public static function init($folder,$type){
-		$files=CacheManager::glob_recursive($folder . DS . '*');
+	public static function initFromFiles($folder,$type,$keyFunction=null){
+		$files=FsUtils::glob_recursive($folder . DS . '*');
 		$result=[];
+		if(!isset($keyFunction)){
+			$keyFunction=function($file){return \basename($file);};
+		}
 		foreach ($files as $file){
 			if (is_file($file)) {
-				$result[]=new CacheFile($type,\basename($file),\filectime($file),\filesize($file),$file);
+				$result[]=new CacheFile($type,$keyFunction($file),\filectime($file),\filesize($file),$file);
 			}
 		}
 		if(\sizeof($result)==0)
@@ -33,7 +36,7 @@ class CacheFile {
 	}
 
 	public static function delete($folder){
-		$files=CacheManager::glob_recursive($folder . DS . '*');
+		$files=FsUtils::glob_recursive($folder . DS . '*');
 		foreach ($files as $file){
 			if (is_file($file)) {
 				\unlink($file);

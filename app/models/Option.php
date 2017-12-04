@@ -3,9 +3,13 @@ namespace models;
 class Option{
 	/**
 	 * @id
+	 * @column("name"=>"id","nullable"=>"","dbType"=>"int(11)")
 	*/
 	private $id;
 
+	/**
+	 * @column("name"=>"libelle","nullable"=>"","dbType"=>"varchar(45)")
+	*/
 	private $libelle;
 
 	 public function getId(){
@@ -22,6 +26,10 @@ class Option{
 
 	 public function setLibelle($libelle){
 		$this->libelle=$libelle;
+	}
+
+	 public function __toString(){
+		return $this->libelle;
 	}
 
 }

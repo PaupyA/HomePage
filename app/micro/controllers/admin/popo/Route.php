@@ -11,8 +11,11 @@ class Route {
 	private $duration;
 	private $name;
 	private $methods;
+	private $id;
+	private $messages;
 
 	public function __construct($path="",$array=[]){
+		$this->messages=[];
 		$this->path=$path;
 		if(isset($array["controller"])){
 			$this->fromArray($array);
@@ -20,6 +23,7 @@ class Route {
 			$this->methods=\array_keys($array);
 			$this->fromArray(\reset($array));
 		}
+		$this->id=\uniqid();
 	}
 
 	private function fromArray($array){
@@ -29,12 +33,41 @@ class Route {
 		$this->cache=$array["cache"];
 		$this->duration=$array["duration"];
 		if(\sizeof($array["parameters"])>0){
-			$method=new \ReflectionMethod($this->controller,$this->action);
-			$params=$method->getParameters();
-			foreach ($array["parameters"] as $param){
-				$this->parameters[]=$params[$param]->getName();
+			if(\class_exists($this->controller)){
+				if(\method_exists($this->controller, $this->action)){
+					$method=new \ReflectionMethod($this->controller,$this->action);
+					$params=$method->getParameters();
+					foreach ($array["parameters"] as $paramIndex){
+						if($paramIndex==="*"){
+							$pName=$this->getVariadicParam($params);
+							if($pName!==false){
+								$this->parameters[]="...".$pName;
+							}
+						}else{
+							$index=\intval(\str_replace("~", "", $paramIndex));
+							if(isset($params[$index])){
+								if(\substr($paramIndex,0,1)==="~")
+									$this->parameters[]=$params[$index]->getName();
+								else
+									$this->parameters[]=$params[$index]->getName()."*";
+							}
+						}
+					}
+				}else{
+					$this->messages[]="The method <b>".$this->action."</b> does not exists in the class <b>".$this->controller."</b>.\n";
+				}
+			}else{
+				$this->messages[$this->controller]="The class <b>".$this->controller."</b> does not exist.\n";
 			}
 		}
+	}
+	private function getVariadicParam($parameters){
+		foreach ($parameters as $param){
+			if($param->isVariadic()){
+				return $param->getName();
+			}
+		}
+		return false;
 	}
 
 	public function getPath() {
@@ -100,11 +133,32 @@ class Route {
 		return $this;
 	}
 
+	public function getCompiledParams(){
+		return " (".((\is_array($this->parameters))?\implode(", ", $this->parameters):$this->parameters).")";
+	}
+
 	public static function init($array){
 		$result=[];
 		foreach ($array as $k=>$v){
 			$result[]=new Route($k, $v);
 		}
 		return $result;
+	}
+
+	public function getId() {
+		return $this->id;
+	}
+
+	public function getMessages() {
+		return $this->messages;
+	}
+
+	public function getMethods() {
+		return $this->methods;
+	}
+
+	public function setMethods($methods) {
+		$this->methods=$methods;
+		return $this;
 	}
 }

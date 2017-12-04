@@ -3,46 +3,72 @@ namespace models;
 class Site{
 	/**
 	 * @id
+	 * @column("name"=>"id","nullable"=>"","dbType"=>"int(11)")
 	*/
 	private $id;
 
+	/**
+	 * @column("name"=>"nom","nullable"=>1,"dbType"=>"varchar(45)")
+	*/
 	private $nom;
 
+	/**
+	 * @column("name"=>"latitude","nullable"=>1,"dbType"=>"double")
+	*/
 	private $latitude;
 
+	/**
+	 * @column("name"=>"longitude","nullable"=>1,"dbType"=>"double")
+	*/
 	private $longitude;
 
+	/**
+	 * @column("name"=>"ecart","nullable"=>1,"dbType"=>"double")
+	*/
 	private $ecart;
 
+	/**
+	 * @column("name"=>"fondEcran","nullable"=>1,"dbType"=>"varchar(255)")
+	*/
 	private $fondEcran;
 
+	/**
+	 * @column("name"=>"couleur","nullable"=>1,"dbType"=>"varchar(10)")
+	*/
 	private $couleur;
 
+	/**
+	 * @column("name"=>"ordre","nullable"=>1,"dbType"=>"varchar(255)")
+	*/
 	private $ordre;
 
+	/**
+	 * @column("name"=>"options","nullable"=>1,"dbType"=>"varchar(255)")
+	*/
 	private $options;
 
 	/**
-	 * @oneToMany("mappedBy"=>"site","className"=>"models\Lienweb")
+	 * @manyToOne
+	 * @joinColumn("className"=>"models\\Moteur","name"=>"idMoteur","nullable"=>"")
+	*/
+	private $moteur;
+
+	/**
+	 * @oneToMany("mappedBy"=>"site","className"=>"models\\Lienweb")
 	*/
 	private $lienwebs;
 
 	/**
-	 * @oneToMany("mappedBy"=>"site","className"=>"models\Moteur")
-	*/
-	private $moteurs;
-
-	/**
-	 * @oneToMany("mappedBy"=>"site","className"=>"models\Reseau")
+	 * @oneToMany("mappedBy"=>"site","className"=>"models\\Reseau")
 	*/
 	private $reseaus;
 
 	/**
-	 * @oneToMany("mappedBy"=>"site","className"=>"models\Utilisateur")
+	 * @oneToMany("mappedBy"=>"site","className"=>"models\\Utilisateur")
 	*/
 	private $utilisateurs;
 
-    public function getId(){
+	 public function getId(){
 		return $this->id;
 	}
 
@@ -114,20 +140,20 @@ class Site{
 		$this->options=$options;
 	}
 
+	 public function getMoteur(){
+		return $this->moteur;
+	}
+
+	 public function setMoteur($moteur){
+		$this->moteur=$moteur;
+	}
+
 	 public function getLienwebs(){
 		return $this->lienwebs;
 	}
 
 	 public function setLienwebs($lienwebs){
 		$this->lienwebs=$lienwebs;
-	}
-
-	 public function getMoteurs(){
-		return $this->moteurs;
-	}
-
-	 public function setMoteurs($moteurs){
-		$this->moteurs=$moteurs;
 	}
 
 	 public function getReseaus(){
@@ -146,10 +172,8 @@ class Site{
 		$this->utilisateurs=$utilisateurs;
 	}
 
-	public function __toString()
-    {
-        // TODO: Implement __toString() method.
-        return $this->nom;
-    }
+	 public function __toString(){
+		return $this->id;
+	}
 
 }

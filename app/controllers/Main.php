@@ -33,23 +33,29 @@ class Main extends ControllerBase {
     }
 
     public function recherche() {
-        //$yahoo = "https://fr.search.yahoo.com/search?p";
-        //$google = "https://www.google.fr/search?q";
-        //$bing = "https://www.bing.com/search?q";
-        //$ecosia = "https://www.ecosia.org/search?q";
-        
-        $user = $_SESSION['user'];
-        $idmoteur= $user->getidMoteur();
-        $moteur = DAO::getOne("models\Moteur", "id='".$idmoteur ."'");
-        
-        $semantic = $this->jquery->semantic();
-        $frmSearch = $semantic->htmlForm("frmSearch");
-        $frmSearch->addInput("q", "", "", "", "Rechercher...");
-        $frmSearch->addButton("submit", "Go");
-        
-        $frmSearch->setProperty("action", $moteur->getCode());
-        $frmSearch->setProperty("method", "get");
-        $frmSearch->setProperty("target", "_blank");
+
+        if (!isset($_SESSION["user"])) {
+            $semantic = $this->jquery->semantic();
+            $frmSearch = $semantic->htmlForm("frmSearch");
+            $input=$frmSearch->addInput("q", "", "", "", "Rechercher...");
+            $input->addAction( "Go");
+            $frmSearch->setProperty("action", "https://www.google.fr/search?q");
+            $frmSearch->setProperty("method", "get");
+            $frmSearch->setProperty("target", "_blank");
+        } else {
+            $IdUser = $_SESSION["user"]->getId();
+            $user = DAO::getOne("models\Utilisateur", $IdUser,true);
+            $moteur = $user->getMoteur();
+
+            $semantic = $this->jquery->semantic();
+            $frmSearch = $semantic->htmlForm("frmSearch");
+            $input=$frmSearch->addInput("q", "", "", "", "Rechercher...");
+            $input->addAction("Go");
+            $frmSearch->setProperty("action", $moteur->getCode());
+            $frmSearch->setProperty("method", "get");
+            $frmSearch->setProperty("target", "_blank");
+        }
+
     }
 
     public function bouton() {
@@ -84,6 +90,13 @@ class Main extends ControllerBase {
         }
         echo $this->jquery->compile($this->view);
     }
+
+    public function test(){
+        $user=DAO::getOne("models\\Utilisateur",4,true,true);
+        var_dump($user->getMoteur());
+    }
+
+
 
     public function deconnexion() {
         session_unset();

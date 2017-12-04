@@ -54,6 +54,7 @@ class DAO {
 			$accesseur="set" . ucfirst($member);
 			if (method_exists($instance, $accesseur)) {
 				$instance->$accesseur($obj);
+				$instance->_rest[$member]=$obj->_rest;
 				return;
 			}
 		}
@@ -105,6 +106,7 @@ class DAO {
 		if (method_exists($instance, $accessor)) {
 			Logger::log($part, "Affectation de " . $member . " pour l'objet " . $class);
 			$instance->$accessor($value);
+			$instance->_rest[$member]=$value;
 		} else {
 			Logger::warn($part, "L'accesseur " . $accessor . " est manquant pour " . $class);
 		}
@@ -189,8 +191,8 @@ class DAO {
 		$objects=array ();
 		$invertedJoinColumns=null;
 		$oneToManyFields=null;
-		$tableName=OrmUtils::getTableName($className);
 		$metaDatas=OrmUtils::getModelMetadata($className);
+		$tableName=$metaDatas["#tableName"];
 		if ($loadManyToOne && isset($metaDatas["#invertedJoinColumn"]))
 			$invertedJoinColumns=$metaDatas["#invertedJoinColumn"];
 		if ($loadOneToMany && isset($metaDatas["#oneToMany"])) {
@@ -200,19 +202,22 @@ class DAO {
 			$condition=" WHERE " . $condition;
 		$query=self::$db->prepareAndExecute($tableName, $condition, $useCache);
 		Logger::log("getAll", "SELECT * FROM " . $tableName . $condition);
+
+		$members=$metaDatas["#fieldNames"];
 		foreach ( $query as $row ) {
-			$o=self::loadObjectFromRow($row, $className, $invertedJoinColumns, $oneToManyFields, $useCache);
-			$objects[]=$o;
+			$objects[]=self::loadObjectFromRow($row, $className, $invertedJoinColumns, $oneToManyFields,$members, $useCache);
 		}
 		return $objects;
 	}
 
-	private static function loadObjectFromRow($row, $className, $invertedJoinColumns, $oneToManyFields, $useCache=NULL) {
+	private static function loadObjectFromRow($row, $className, $invertedJoinColumns, $oneToManyFields, $members,$useCache=NULL) {
 		$o=new $className();
 		foreach ( $row as $k => $v ) {
-			$accesseur="set" . ucfirst($k);
+			$field=\array_search($k, $members);
+			$accesseur="set" . ucfirst($field);
 			if (method_exists($o, $accesseur)) {
 				$o->$accesseur($v);
+				$o->_rest[$field]=$v;
 			}
 			if (isset($invertedJoinColumns) && isset($invertedJoinColumns[$k])) {
 				self::getOneManyToOne($o, $v, $invertedJoinColumns[$k], $useCache);
@@ -379,14 +384,24 @@ class DAO {
 
 	/**
 	 * Réalise la connexion à la base de données en utilisant les paramètres passés
+	 * @param string $dbType
 	 * @param string $dbName
 	 * @param string $serverName
 	 * @param string $port
 	 * @param string $user
 	 * @param string $password
 	 */
-	public static function connect($dbName, $serverName="127.0.0.1", $port="3306", $user="root", $password="", $cache=false) {
-		self::$db=new Database($dbName, $serverName, $port, $user, $password, $cache);
-		self::$db->connect();
+	public static function connect($dbType,$dbName, $serverName="127.0.0.1", $port="3306", $user="root", $password="", $cache=false) {
+		self::$db=new Database($dbType,$dbName, $serverName, $port, $user, $password, $cache);
+		try {
+			self::$db->connect();
+		} catch (\Exception $e) {
+			Logger::error("DAO", $e->getMessage());
+			throw $e;
+		}
+	}
+
+	public static function isConnected(){
+		return self::$db!==null && (self::$db instanceof Database) && self::$db->isConnected();
 	}
 }

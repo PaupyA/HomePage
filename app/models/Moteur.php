@@ -3,30 +3,34 @@ namespace models;
 class Moteur{
 	/**
 	 * @id
+	 * @column("name"=>"id","nullable"=>"","dbType"=>"int(11)")
 	*/
 	private $id;
 
+	/**
+	 * @column("name"=>"nom","nullable"=>1,"dbType"=>"varchar(45)")
+	*/
 	private $nom;
 
+	/**
+	 * @column("name"=>"code","nullable"=>1,"dbType"=>"text")
+	*/
 	private $code;
 
 	/**
-	 * @manyToOne
-	 * @joinColumn("className"=>"models\Etablissement","name"=>"idEtablissement","nullable"=>false)
+	 * @oneToMany("mappedBy"=>"moteur","className"=>"models\\Etablissement")
 	*/
-	private $etablissement;
+	private $etablissements;
 
 	/**
-	 * @manyToOne
-	 * @joinColumn("className"=>"models\Site","name"=>"idSite","nullable"=>false)
+	 * @oneToMany("mappedBy"=>"moteur","className"=>"models\\Site")
 	*/
-	private $site;
+	private $sites;
 
 	/**
-	 * @manyToOne
-	 * @joinColumn("className"=>"models\Utilisateur","name"=>"idUtilisateur","nullable"=>false)
+	 * @oneToMany("mappedBy"=>"moteur","className"=>"models\\Utilisateur")
 	*/
-	private $utilisateur;
+	private $utilisateurs;
 
 	 public function getId(){
 		return $this->id;
@@ -52,28 +56,32 @@ class Moteur{
 		$this->code=$code;
 	}
 
-	 public function getEtablissement(){
-		return $this->etablissement;
+	 public function getEtablissements(){
+		return $this->etablissements;
 	}
 
-	 public function setEtablissement($etablissement){
-		$this->etablissement=$etablissement;
+	 public function setEtablissements($etablissements){
+		$this->etablissements=$etablissements;
 	}
 
-	 public function getSite(){
-		return $this->site;
+	 public function getSites(){
+		return $this->sites;
 	}
 
-	 public function setSite($site){
-		$this->site=$site;
+	 public function setSites($sites){
+		$this->sites=$sites;
 	}
 
-	 public function getUtilisateur(){
-		return $this->utilisateur;
+	 public function getUtilisateurs(){
+		return $this->utilisateurs;
 	}
 
-	 public function setUtilisateur($utilisateur){
-		$this->utilisateur=$utilisateur;
+	 public function setUtilisateurs($utilisateurs){
+		$this->utilisateurs=$utilisateurs;
+	}
+
+	 public function __toString(){
+		return $this->id;
 	}
 
 }
