@@ -32,37 +32,47 @@ class Main extends ControllerBase {
         $this->loadView("index.html");
     }
 
+    // Barre de recherche
     public function recherche() {
 
+        // Si il n'y a pas d'utilisateur de connecté
         if (!isset($_SESSION["user"])) {
             $semantic = $this->jquery->semantic();
             $frmSearch = $semantic->htmlForm("frmSearch");
-            $input=$frmSearch->addInput("q", "", "", "", "Rechercher...");
-            $input->addAction( "Go");
+            $input = $frmSearch->addInput("q", "", "", "", "Rechercher...");
+            $input->addAction("Go");
+            // On définis le moteur de recherche de base par Google
             $frmSearch->setProperty("action", "https://www.google.fr/search?q");
             $frmSearch->setProperty("method", "get");
             $frmSearch->setProperty("target", "_blank");
+            // Si un utilisateur est connecté
         } else {
+            // On recupère son ID
             $IdUser = $_SESSION["user"]->getId();
-            $user = DAO::getOne("models\Utilisateur", $IdUser,true);
+            // On récupère les informations de l'utilisateur lié à l'ID
+            $user = DAO::getOne("models\Utilisateur", $IdUser, true);
+            // On récupère l'ID du moteur choisis par l'utilisateur
             $moteur = $user->getMoteur();
 
             $semantic = $this->jquery->semantic();
             $frmSearch = $semantic->htmlForm("frmSearch");
-            $input=$frmSearch->addInput("q", "", "", "", "Rechercher...");
+            $input = $frmSearch->addInput("q", "", "", "", "Rechercher...");
             $input->addAction("Go");
+            // On récupère et définis le moteur de recherche selon le moteur choisis par l'utilisateur
             $frmSearch->setProperty("action", $moteur->getCode());
             $frmSearch->setProperty("method", "get");
             $frmSearch->setProperty("target", "_blank");
         }
-
     }
 
+    // Bouton de connexion
     public function bouton() {
         $semantic = $this->jquery->semantic();
+        // Si il n'y a pas d'utilisateur de connecté, affiche le bouton pour s'identifier
         if (!isset($_SESSION["user"])) {
             $btLog = $semantic->htmlButton("btLogin", "S'identifier", "blue", "$('#modal-frm2-4').modal('show');");
             $btLog->addIcon("sign in");
+        // Si un utilisateur est connecté, affiche un bouton "Profil" et  "Se déconnecter"
         } else {
             $btDeco = $semantic->htmlButtonGroups("btDeco", ["Se déconnecter"]);
             $btDeco->setPropertyValues("data-ajax", ["Main/deconnexion"]);
@@ -72,7 +82,8 @@ class Main extends ControllerBase {
             $btProfile->asLink("ProfileController");
         }
     }
-
+    
+    // Fonction pour la Connexion
     public function connexion() {
         $semantic = $this->jquery->semantic();
         $user = DAO::getOne("models\Utilisateur", "login='" . $_POST['login'] . "'");
@@ -90,15 +101,10 @@ class Main extends ControllerBase {
         }
         echo $this->jquery->compile($this->view);
     }
-
-    public function test(){
-        $user=DAO::getOne("models\\Utilisateur",4,true,true);
-        var_dump($user->getMoteur());
-    }
-
-
-
+    
+    // Fonction de déconnexion
     public function deconnexion() {
+        // Fermeture et "destruction" de la session utilisateur
         session_unset();
         session_destroy();
         $this->jquery->get("Main/index", "body");
