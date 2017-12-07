@@ -26,7 +26,7 @@ class SitesController extends ControllerBase
         $semantic=$this->jquery->semantic();
 
         $btHome=$semantic->htmlButton("btHome","");
-        $btHome->asIcon("home")->asLink("BoardController");
+        $btHome->asIcon("chevron left")->asLink("BoardController");
 
         $bts=$semantic->htmlButtonGroups("buttons",["Liste des sites","Ajouter un site"]);
         $bts->setPropertyValues("data-ajax", ["all/","addSite/"]);

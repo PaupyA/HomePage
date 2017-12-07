@@ -26,7 +26,7 @@ class UsersController extends ControllerBase
         $semantic = $this->jquery->semantic();
 
         $btHome = $semantic->htmlButton("btHome", "");
-        $btHome->asIcon("home")->asLink("BoardController");
+        $btHome->asIcon("chevron left")->asLink("BoardController");
 
         $bts = $semantic->htmlButtonGroups("buttons", ["Liste des utilisateurs", "Ajouter un utilisateur"]);
         $bts->setPropertyValues("data-ajax", ["all/", "addUser/"]);
@@ -67,19 +67,21 @@ class UsersController extends ControllerBase
         $semantic=$this->jquery->semantic();
 
         $user=new Utilisateur();
+        $user->idSite="";
+        $user->idStatut="";
 
         $form=$semantic->dataForm("frmUserAdd", $user);
 
-        $form->setFields(["login","password","elementsMasques","fondEcran","couleur","ordre","statut","site","submit"]);
+        $form->setFields(["login","password","elementsMasques","fondEcran","couleur","ordre","idStatut","idSite","submit"]);
         $form->setCaptions(["Login","Password","Elements Masqués","Fond d'écran","Couleur","Ordre","Statut","Site","Valider"]);
 
-        $form->fieldAsSubmit("submit","blue","UsersController/newUser/","#divUsers");
-
         $sites=DAO::getAll("models\Site");
-        $form->fieldAsDropDown("site",JArray::modelArray($sites,"getId","getNom"));
+        $form->fieldAsDropDown("idSite",JArray::modelArray($sites,"getId","getNom"));
 
         $status=DAO::getAll("models\Statut");
-        $form->fieldAsDropDown("statut",JArray::modelArray($status,"getId","getLibelle"));
+        $form->fieldAsDropDown("idStatut",JArray::modelArray($status,"getId","getLibelle"));
+
+        $form->fieldAsSubmit("submit","blue","UsersController/newUser/","#divUsers");
     }
 
     public function addUser() {

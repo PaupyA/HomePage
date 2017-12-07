@@ -28,6 +28,8 @@ class Main extends ControllerBase {
 
         $this->recherche();
 
+        $this->liens();
+
         $this->jquery->compile($this->view);
         $this->loadView("index.html");
     }
@@ -61,10 +63,20 @@ class Main extends ControllerBase {
         if (!isset($_SESSION["user"])) {
             $btLog = $semantic->htmlButton("btLogin", "S'identifier", "blue", "$('#modal-frm2-4').modal('show');");
             $btLog->addIcon("sign in");
-        } else {
-            $btDeco = $semantic->htmlButtonGroups("btDeco", ["Se déconnecter"]);
-            $btDeco->setPropertyValues("data-ajax", ["Main/deconnexion"]);
-            $btDeco->getOnClick("/", "body", ["attr" => "data-ajax"]);
+        } elseif ($_SESSION["user"]->getStatut() == "Super administrateur"){
+            $btDeco = $semantic->htmlButton("btDeco", "Se déconnecter");
+            $btDeco->addIcon("sign out");
+            $btDeco->asLink("Main/deconnexion");
+            $btProfile = $semantic->htmlButton("btProfil", "Profil", "blue");
+            $btProfile->addIcon("user");
+            $btProfile->asLink("ProfileController");
+            $btBoard = $semantic->htmlButton("btBoard","Board","yellow");
+            $btBoard->addIcon("settings");
+            $btBoard->asLink("BoardController");
+        } elseif(isset($_SESSION["user"])) {
+            $btDeco = $semantic->htmlButton("btDeco", "Se déconnecter");
+            $btDeco->addIcon("sign out");
+            $btDeco->asLink("Main/deconnexion");
             $btProfile = $semantic->htmlButton("btProfil", "Profil", "blue");
             $btProfile->addIcon("user");
             $btProfile->asLink("ProfileController");
@@ -89,12 +101,17 @@ class Main extends ControllerBase {
         echo $this->jquery->compile($this->view);
     }
 
-    public function test(){
-        $user=DAO::getOne("models\\Utilisateur",4,true,true);
-        var_dump($user->getMoteur());
+    public function liens() {
+        if (isset($_SESSION["user"])){
+            $liens = DAO::getAll("models\Lienweb","idUtilisateur=".$_SESSION['user']->getId()."");
+
+            /*foreach ($liens as $lien){
+                $link = $lien->getUrl();
+                echo "<iframe src=http://$link style=\"border:1px lightgrey solid;\" scrolling=\"no\" height=\"250\" width=\"291\">
+                </iframe>";
+            }*/
+        }
     }
-
-
 
     public function deconnexion() {
         session_unset();

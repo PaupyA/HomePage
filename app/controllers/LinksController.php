@@ -23,11 +23,11 @@ use models\Site;
 class LinksController extends ControllerBase
 {
 
-    public function index() {
+    public function index() { // Page Affichage des boutons + Liens perso avec la méthode all()
         $semantic=$this->jquery->semantic();
 
         $btHome=$semantic->htmlButton("btHome","");
-        $btHome->asIcon("home")->asLink("BoardController");
+        $btHome->asIcon("chevron left")->asLink("BoardController");
 
         $bts=$semantic->htmlButtonGroups("buttons",["Liste des liens","Ajouter un lien"]);
         $bts->setPropertyValues("data-ajax", ["all/","addLink/"]);
@@ -38,17 +38,15 @@ class LinksController extends ControllerBase
         $this->loadView("links/index.html");
     }
 
-    private function _all() {
+    private function _all() { // Affichage liens perso
         $links=DAO::getAll("models\Lienweb");
 
         $semantic=$this->jquery->semantic();
-
         $table=$semantic->dataTable("tblLinks", "models\Lienweb", $links);
 
         $table->setIdentifierFunction(function($i,$o){return $o->getId();});
-        $table->setFields(["libelle","url"]);
-        $table->setCaptions(["Site","URL"]);
-
+        $table->setFields(["libelle","url","utilisateur"]);
+        $table->setCaptions(["Site","URL",'Utilisateur']);
         $table->addEditButton(false);
         $table->addDeleteButton(false);
         $table->setUrls(["edit"=>"LinksController/editLink","delete"=>"LinksController/deleteLink"]);
@@ -59,7 +57,8 @@ class LinksController extends ControllerBase
         $this->jquery->compile($this->view);
         $this->loadView("links/all.html");
     }
-    private function _addLink() {
+
+    private function _addLink() { // Ajout d'un objet liens
         $semantic=$this->jquery->semantic();
 
         $link=new Lienweb();
@@ -79,13 +78,12 @@ class LinksController extends ControllerBase
 
         $form->fieldAsSubmit("submit","blue","LinksController/newLink/","#divLink");
     }
-
     public function addLink() {
         $this->_addLink();
         $this->jquery->compile($this->view);
         $this->loadView("links/add.html");
     }
-    public function newLink() {
+    public function newLink() { // création de l'objet
         $semantic=$this->jquery->semantic();
         $link=new Lienweb();
 
@@ -102,7 +100,8 @@ class LinksController extends ControllerBase
             $this->all();
         }
     }
-    private function _editLink($id) {
+
+    private function _editLink($id) { // édition de l'objet liens
         $semantic=$this->jquery->semantic();
 
         $link = DAO::getOne("models\Lienweb",$id  );
@@ -128,7 +127,7 @@ class LinksController extends ControllerBase
         $this->jquery->compile($this->view);
         $this->loadView("links/edit.html");
     }
-    public function updateLink() {
+    public function updateLink() { // mise a jour de l'objet liens
         $semantic=$this->jquery->semantic();
 
         $link = DAO::getOne("models\Lienweb",$_POST["id"] );
@@ -147,7 +146,8 @@ class LinksController extends ControllerBase
         }
 
     }
-    public function deleteLink($id) {
+
+    public function deleteLink($id) { // suppression objet liens
         $semantic=$this->jquery->semantic();
         $link = DAO::getOne("models\Lienweb",$id );
 
@@ -159,18 +159,26 @@ class LinksController extends ControllerBase
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private function _perso() {
-        $links=DAO::getAll("models\Lienweb","idUtilisateur = ".$_SESSION['user']->getId());
 
+    public function indexPerso() { // Page Affichage des boutons + Liens perso avec la méthode allPerso()
         $semantic=$this->jquery->semantic();
 
         $btHome=$semantic->htmlButton("btHome","");
         $btHome->asIcon("home")->asLink("");
 
-        $bts=$semantic->htmlButtonGroups("buttons",["Information","Ajouter un lien"]);
-        $bts->setPropertyValues("data-ajax", ["ProfileController/","LinksController/addLinkPerso/"]);
-        $bts->getOnClick("","#divLink",["attr"=>"data-ajax"]);
+        $bts=$semantic->htmlButtonGroups("buttons",["Liste liens","Ajouter un lien"]);
+        $bts->setPropertyValues("data-ajax", ["allPerso","addLinkPerso/"]);
+        $bts->getOnClick("LinksController/","#divLink",["attr"=>"data-ajax"]);
 
+        $this->_allPerso();
+        $this->jquery->compile($this->view);
+        $this->loadView("links/mesLiens.html");
+    }
+
+    private function _allPerso() { // Affichage liens perso
+        $semantic=$this->jquery->semantic();
+
+        $links=DAO::getAll("models\Lienweb","idUtilisateur = ".$_SESSION['user']->getId());
 
         $table=$semantic->dataTable("tblLinks", "models\Lienweb", $links);
 
@@ -183,55 +191,52 @@ class LinksController extends ControllerBase
         $table->setUrls(["edit"=>"LinksController/editLinkPerso","delete"=>"LinksController/deleteLinkPerso"]);
         $table->setTargetSelector("#divLink");
     }
-
-    public function perso() {
-        $this->_perso();
+    public function allPerso() {
+        $this->_allPerso();
         $this->jquery->compile($this->view);
-        $this->loadView("profil/link.html");
+        $this->loadView("links/all.html");
     }
 
-    private function _addLinkPerso() {
+    private function _addLinkPerso() { // Ajout liens perso
         $semantic=$this->jquery->semantic();
 
         $link=new Lienweb();
-        $link->idUtilisateur= $_SESSION['user']->id;
 
         $form=$semantic->dataForm("frmLinkAdd", $link);
 
         $form->setFields(["libelle","url\n","ordre","idUtilisateur","submit"]);
         $form->setCaptions(["Site internet","URL","Ordre","Utilisateur","Valider"]);
-        //$form->fieldAsHidden("idUtilisateur");
 
-        $form->fieldAsSubmit("submit","blue","newLinkPerso/","#divLink");
+        $form->fieldAsHidden("idUtilisateur");
+
+        $form->fieldAsSubmit("submit","blue","LinksController/newLinkPerso","#divLink");
     }
-
     public function addLinkPerso() {
         $this->_addLinkPerso();
         $this->jquery->compile($this->view);
         $this->loadView("links/add.html");
     }
-    public function newLinkPerso() {
+    public function newLinkPerso() { // création nouvel objet
         $semantic=$this->jquery->semantic();
 
         $link=new Lienweb();
 
         RequestUtils::setValuesToObject($link,$_POST);
 
-        $user=DAO::getOne("models\Utilisateur",$_POST["idUtilisateur"]);
+        $user=DAO::getOne("models\Utilisateur",$_SESSION['user']->getId());
 
         $link->setUtilisateur($user);
 
         if(DAO::insert($link)){
             echo $semantic->htmlMessage("#divLink","".$link->getLibelle()." ajouté");
-            $this->perso();
+            $this->allPerso();
         }
     }
 
-    private function _editLinkPerso($id) {
+    private function _editLinkPerso($id) { // Edition de l'objet
         $semantic=$this->jquery->semantic();
 
         $link = DAO::getOne("models\Lienweb",$id  );
-        $link->idSite=$link->getSite()->getId();
         $link->idUtilisateur=$link->getUtilisateur()->getId();
         $form=$semantic->dataForm("frmLinkEdit", $link);
         $form->setFields(["id","libelle","url\n","ordre","\nsubmit"]);
@@ -247,10 +252,13 @@ class LinksController extends ControllerBase
         $this->jquery->compile($this->view);
         $this->loadView("links/edit.html");
     }
-    public function updateLinkPerso() {
+    public function updateLinkPerso() { // mise à jour de l'objet
         $semantic=$this->jquery->semantic();
 
         $link = DAO::getOne("models\Lienweb",$_POST["id"] );
+        $site = DAO::getOne("models\Site",$_SESSION['user']->getSite());
+
+        $link->setSite($site);
 
         RequestUtils::setValuesToObject($link,$_POST);
 
@@ -260,13 +268,14 @@ class LinksController extends ControllerBase
         }
         echo $this->jquery->compile($this->view);
     }
-    public function deleteLinkPerso($id) {
+
+    public function deleteLinkPerso($id) { // suppression de l'objet
         $semantic=$this->jquery->semantic();
         $link = DAO::getOne("models\Lienweb",$id );
 
         if(DAO::remove($link)) {
             echo $semantic->htmlMessage("#divLink","".$link->getLibelle()." supprimé");
-            $this->jquery->get("LinksController/perso",".ui.container");
+            $this->jquery->get("LinksController/indexPerso",".ui.container");
         }
         echo $this->jquery->compile($this->view);
     }

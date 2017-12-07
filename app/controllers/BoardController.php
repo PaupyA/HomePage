@@ -34,6 +34,9 @@ class BoardController extends ControllerBase
         $btLinks=$semantic->htmlButton("btLinks","Gestion des liens");
         $btLinks->asLink("LinksController");
 
+        $btMoteur=$semantic->htmlButton("btMoteur","Gestion des moteurs");
+        $btMoteur->asLink("MoteursController");
+
         $this->jquery->compile($this->view);
         $this->loadView("board/index.html");
     }

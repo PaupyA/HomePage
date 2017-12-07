@@ -22,19 +22,6 @@ use controllers\LinksController;
 
 class ProfileController extends ControllerBase
 {
-    public function initialize()
-    {
-        $fond="";
-        if(isset($_SESSION['user'])) {
-            $user=$_SESSION['user'];
-            $fond=$user->getFondEcran();
-        }
-
-        if(!RequestUtils::isAjax()) {
-            $this->loadView("main/vHeader.html", ["fond"=>$fond]);
-        }
-    }
-
     public function index() {
         $semantic=$this->jquery->semantic();
 
@@ -42,7 +29,7 @@ class ProfileController extends ControllerBase
         $btHome->asIcon("home")->asLink("");
 
         $btLink=$semantic->htmlButtonGroups("btLink",["Liens perso"]);
-        $btLink->setPropertyValues("data-ajax", ["LinksController/perso"]);
+        $btLink->setPropertyValues("data-ajax", ["LinksController/indexPerso"]);
         $btLink->getOnClick("",".ui.container",["attr"=>"data-ajax"]);
 
         $this->_printData();
@@ -54,20 +41,17 @@ class ProfileController extends ControllerBase
         $id = $_SESSION['user']->getId();
         $semantic=$this->jquery->semantic();
         $user = DAO::getOne("models\Utilisateur",$id );
-        $user->idSite=$user->getSite()->getId();
-        $user->idStatut=$user->getStatut()->getId();
+        $user->idMoteur=$user->getMoteur()->getId();
         $form=$semantic->dataForm("frmUser", $user);
 
-        $form->setFields(["login","password","elementsMasques","fondEcran","couleur","ordre","idStatut","idSite","submit"]);
-        $form->setCaptions(["Login","Password","Elements Masqués","Fond d'écran","Couleur","Ordre","Statut","Site","Valider"]);
+        $form->setFields(["login","password","elementsMasques","fondEcran","couleur","ordre","idMoteur","submit"]);
+        $form->setCaptions(["Identifiant","Mot de passe","Elements Masqués","Fond d'écran","Couleur","Ordre","Moteur","Valider"]);
+
+
+        $moteur=DAO::getAll("models\Moteur");
+        $form->fieldAsDropDown("idMoteur",JArray::modelArray($moteur,"getId","getNom"));
 
         $form->fieldAsSubmit("submit","blue","ProfileController/updateUser/".$id,"#msgUpdate");
-
-        $sites=DAO::getAll("models\Site");
-        $form->fieldAsDropDown("idSite",JArray::modelArray($sites,"getId","getNom"));
-
-        $status=DAO::getAll("models\Statut");
-        $form->fieldAsDropDown("idStatut",JArray::modelArray($status,"getId","getLibelle"));
     }
 
     public function printData(){
@@ -77,9 +61,12 @@ class ProfileController extends ControllerBase
     }
 
     public function updateUser() {
-        $id=1;
         $semantic=$this->jquery->semantic();
-        $user = DAO::getOne("models\Utilisateur",$id );
+
+        $user = DAO::getOne("models\Utilisateur",$_SESSION['user']->getId());
+        $moteur = DAO::getOne("models\Moteur", $_POST["idMoteur"]);
+
+        $user->setMoteur($moteur);
 
         RequestUtils::setValuesToObject($user,$_POST);
 
