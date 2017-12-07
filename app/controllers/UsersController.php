@@ -95,11 +95,11 @@ class UsersController extends ControllerBase
 
         RequestUtils::setValuesToObject($user,$_POST);
 
-        $site=DAO::getOne("models\Site",$_POST["site"]);
+        $site=DAO::getOne("models\Site",$_POST["idSite"]);
 
         $user->setSite($site);
 
-        $statut=DAO::getOne("models\Statut",$_POST["statut"]);
+        $statut=DAO::getOne("models\Statut",$_POST["idStatut"]);
 
         $user->setStatut($statut);
 
