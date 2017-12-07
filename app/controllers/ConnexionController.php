@@ -21,6 +21,7 @@ use models\Utilisateur;
  */
 class ConnexionController extends ControllerBase {
 
+    // Page de connexion
     public function index() {
         $semantic=$this->jquery->semantic();
 
@@ -35,7 +36,8 @@ class ConnexionController extends ControllerBase {
         $this->jquery->compile($this->view);
         $this->loadView("connexion/index.html");
     }
-
+    
+    // Fonction connexion
     public function connexion() {
         $semantic=$this->jquery->semantic();
         if($_SESSION["user"]=DAO::getOne("models\Utilisateur","login='".$_POST['login']."'")

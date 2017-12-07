@@ -1,155 +1,159 @@
 <?php
+
 namespace models;
-class Utilisateur{
-	/**
-	 * @id
-	 * @column("name"=>"id","nullable"=>"","dbType"=>"int(11)")
-	*/
-	private $id;
 
-	/**
-	 * @column("name"=>"login","nullable"=>1,"dbType"=>"varchar(45)")
-	*/
-	private $login;
+class Utilisateur {
 
-	/**
-	 * @column("name"=>"password","nullable"=>1,"dbType"=>"varchar(45)")
-	*/
-	private $password;
+    /**
+     * @id
+     * @column("name"=>"id","nullable"=>"","dbType"=>"int(11)")
+     */
+    private $id;
 
-	/**
-	 * @column("name"=>"elementsMasques","nullable"=>1,"dbType"=>"varchar(255)")
-	*/
-	private $elementsMasques;
+    /**
+     * @column("name"=>"login","nullable"=>1,"dbType"=>"varchar(45)")
+     */
+    private $login;
 
-	/**
-	 * @column("name"=>"fondEcran","nullable"=>1,"dbType"=>"varchar(255)")
-	*/
-	private $fondEcran;
+    /**
+     * @column("name"=>"password","nullable"=>1,"dbType"=>"varchar(45)")
+     */
+    private $password;
 
-	/**
-	 * @column("name"=>"couleur","nullable"=>1,"dbType"=>"varchar(10)")
-	*/
-	private $couleur;
+    /**
+     * @column("name"=>"elementsMasques","nullable"=>1,"dbType"=>"varchar(255)")
+     */
+    private $elementsMasques;
 
-	/**
-	 * @column("name"=>"ordre","nullable"=>1,"dbType"=>"varchar(255)")
-	*/
-	private $ordre;
+    /**
+     * @column("name"=>"fondEcran","nullable"=>1,"dbType"=>"varchar(255)")
+     */
+    private $fondEcran;
 
-	/**
-	 * @manyToOne
-	 * @joinColumn("className"=>"models\\Moteur","name"=>"idMoteur","nullable"=>"")
-	*/
-	private $moteur;
+    /**
+     * @column("name"=>"couleur","nullable"=>1,"dbType"=>"varchar(10)")
+     */
+    private $couleur;
 
-	/**
-	 * @manyToOne
-	 * @joinColumn("className"=>"models\\Site","name"=>"idSite","nullable"=>"")
-	*/
-	private $site;
+    /**
+     * @column("name"=>"ordre","nullable"=>1,"dbType"=>"varchar(255)")
+     */
+    private $ordre;
 
-	/**
-	 * @manyToOne
-	 * @joinColumn("className"=>"models\\Statut","name"=>"idStatut","nullable"=>"")
-	*/
-	private $statut;
+    /**
+     * @manyToOne
+     * @joinColumn("className"=>"models\\Moteur","name"=>"idMoteur","nullable"=>"")
+     */
+    private $moteur;
 
-	/**
-	 * @oneToMany("mappedBy"=>"utilisateur","className"=>"models\\Lienweb")
-	*/
-	private $lienwebs;
+    /**
+     * @manyToOne
+     * @joinColumn("className"=>"models\\Site","name"=>"idSite","nullable"=>"")
+     */
+    private $site;
 
-	 public function getId(){
-		return $this->id;
-	}
+    /**
+     * @manyToOne
+     * @joinColumn("className"=>"models\\Statut","name"=>"idStatut","nullable"=>"")
+     */
+    private $statut;
 
-	 public function setId($id){
-		$this->id=$id;
-	}
+    /**
+     * @oneToMany("mappedBy"=>"utilisateur","className"=>"models\\Lienweb")
+     */
+    private $lienwebs;
 
-	 public function getLogin(){
-		return $this->login;
-	}
+    public function getId() {
+        return $this->id;
+    }
 
-	 public function setLogin($login){
-		$this->login=$login;
-	}
+    public function setId($id) {
+        $this->id = $id;
+    }
 
-	 public function getPassword(){
-		return $this->password;
-	}
+    public function getLogin() {
+        return $this->login;
+    }
 
-	 public function setPassword($password){
-		$this->password=$password;
-	}
+    public function setLogin($login) {
+        $this->login = $login;
+    }
 
-	 public function getElementsMasques(){
-		return $this->elementsMasques;
-	}
+    public function getPassword() {
+        return $this->password;
+    }
 
-	 public function setElementsMasques($elementsMasques){
-		$this->elementsMasques=$elementsMasques;
-	}
+    public function setPassword($password) {
+        $this->password = $password;
+    }
 
-	 public function getFondEcran(){
-		return $this->fondEcran;
-	}
+    public function getElementsMasques() {
+        return $this->elementsMasques;
+    }
 
-	 public function setFondEcran($fondEcran){
-		$this->fondEcran=$fondEcran;
-	}
+    public function setElementsMasques($elementsMasques) {
+        $this->elementsMasques = $elementsMasques;
+    }
 
-	 public function getCouleur(){
-		return $this->couleur;
-	}
+    public function getFondEcran() {
+        return $this->fondEcran;
+    }
 
-	 public function setCouleur($couleur){
-		$this->couleur=$couleur;
-	}
+    public function setFondEcran($fondEcran) {
+        $this->fondEcran = $fondEcran;
+    }
 
-	 public function getOrdre(){
-		return $this->ordre;
-	}
+    public function getCouleur() {
+        return $this->couleur;
+    }
 
-	 public function setOrdre($ordre){
-		$this->ordre=$ordre;
-	}
+    public function setCouleur($couleur) {
+        $this->couleur = $couleur;
+    }
 
-	 public function getMoteur(){
-		return $this->moteur;
-	}
+    public function getOrdre() {
+        return $this->ordre;
+    }
 
-	 public function setMoteur($moteur){
-		$this->moteur=$moteur;
-	}
+    public function setOrdre($ordre) {
+        $this->ordre = $ordre;
+    }
 
-	 public function getSite(){
-		return $this->site;
-	}
+    public function getMoteur() {
+        return $this->moteur;
+    }
 
-	 public function setSite($site){
-		$this->site=$site;
-	}
+    public function setMoteur($moteur) {
+        $this->moteur = $moteur;
+    }
 
-	 public function getStatut(){
-		return $this->statut;
-	}
+    public function getSite() {
+        return $this->site;
+    }
 
-	 public function setStatut($statut){
-		$this->statut=$statut;
-	}
+    public function setSite($site) {
+        $this->site = $site;
+    }
 
-	 public function getLienwebs(){
-		return $this->lienwebs;
-	}
+    public function getStatut() {
+        return $this->statut;
+    }
 
-	 public function setLienwebs($lienwebs){
-		$this->lienwebs=$lienwebs;
-	}
+    public function setStatut($statut) {
+        $this->statut = $statut;
+    }
 
-	 public function __toString(){
-		return $this->id;
-	}
+    public function getLienwebs() {
+        return $this->lienwebs;
+    }
+
+    public function setLienwebs($lienwebs) {
+        $this->lienwebs = $lienwebs;
+    }
+
+    public function __toString() {
+        return $this->id;
+    }
 
 }
+

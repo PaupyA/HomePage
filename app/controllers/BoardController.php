@@ -19,6 +19,8 @@ use micro\utils\RequestUtils;
 
 class BoardController extends ControllerBase
 {
+    
+    // Boutons de gestion des sites/utilisateurs/liens
     public function index() {
         $semantic=$this->jquery->semantic();
 
