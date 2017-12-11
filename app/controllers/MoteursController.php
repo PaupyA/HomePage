@@ -16,6 +16,9 @@ use models\Moteur;
 
 class MoteursController extends ControllerBase
 {
+    /**
+     * Page accueil gestion des moteurs de recherche
+     */
     public function index()
     {
         $semantic=$this->jquery->semantic();
@@ -32,6 +35,9 @@ class MoteursController extends ControllerBase
         $this->loadView("moteurs/index.html");
     }
 
+    /**
+     * Creation d'une table regroupant tout les moteurs inscrit dans la base de données
+     */
     private function _all(){
         $moteurs=DAO::getAll("models\Moteur");
 
@@ -54,6 +60,9 @@ class MoteursController extends ControllerBase
         $this->loadView("moteurs/all.html");
     }
 
+    /**
+     * Creation d'un formulaire d'ajout de moteur
+     */
     private function _addMoteur() {
         $semantic=$this->jquery->semantic();
 
@@ -64,12 +73,15 @@ class MoteursController extends ControllerBase
         $form->setCaptions(["Nom du moteur","Code","Valider"]);
         $form->fieldAsSubmit("submit","blue","MoteursController/newMoteur/","#divMoteur");
     }
-
     public function addMoteur() {
         $this->_addMoteur();
         $this->jquery->compile($this->view);
         $this->loadView("moteurs/add.html");
     }
+
+    /**
+     * Creation d'un nouveau objet moteur et enregistrement dans la base de données grace aux données recuperer dans le formulaire
+     */
     public function newMoteur() {
         $semantic=$this->jquery->semantic();
         $moteur=new Moteur();
@@ -82,6 +94,10 @@ class MoteursController extends ControllerBase
         }
     }
 
+    /**
+     * @param $id
+     * Creation d'un formulaire d'edition de l'objet moteur
+     */
     private function _editMoteur($id) {
         $semantic=$this->jquery->semantic();
 
@@ -93,12 +109,16 @@ class MoteursController extends ControllerBase
         $form->setCaptions(["Nom du moteur","Code","Valider"]);
         $form->fieldAsSubmit("submit","blue","MoteursController/updateMoteur/".$id,"#divMoteur");
     }
-
     public function editMoteur($id) {
         $this->_editMoteur($id);
         $this->jquery->compile($this->view);
         $this->loadView("moteurs/edit.html");
     }
+
+    /**
+     * @param $id
+     * Mise a jour de l'objet moteur selectionné avec les données du formulaire
+     */
     public function updateMoteur($id) {
         $semantic=$this->jquery->semantic();
         $moteur = DAO::getOne("models\Moteur",$id );
@@ -112,7 +132,10 @@ class MoteursController extends ControllerBase
 
     }
 
-
+    /**
+     * @param $id
+     * Supprime l'objet moteur selectionné
+     */
     public function deleteMoteur($id) {
         $semantic=$this->jquery->semantic();
         $moteur = DAO::getOne("models\Moteur",$id );

@@ -22,6 +22,9 @@ use controllers\LinksController;
 
 class ProfileController extends ControllerBase
 {
+    /**
+     * Page accueil du profil de l'utilisateur
+     */
     public function index() {
         $semantic=$this->jquery->semantic();
 
@@ -37,6 +40,9 @@ class ProfileController extends ControllerBase
         $this->loadview("profil/index.html");
     }
 
+    /**
+     * Affiche toutes les données de l'utilisateur sous forme d'input afin qu'ils puissent les modifiées
+     */
     private function _printData() {
         $id = $_SESSION['user']->getId();
         $semantic=$this->jquery->semantic();
@@ -53,13 +59,15 @@ class ProfileController extends ControllerBase
 
         $form->fieldAsSubmit("submit","blue","ProfileController/updateUser/".$id,"#msgUpdate");
     }
-
     public function printData(){
         $this->_printData();
         $this->jquery->compile($this->view);
         $this->loadview("profil/index.html");
     }
 
+    /**
+     * Mise a jour des données de l'utilisateur
+     */
     public function updateUser() {
         $semantic=$this->jquery->semantic();
 

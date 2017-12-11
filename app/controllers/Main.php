@@ -13,8 +13,10 @@ use models\Utilisateur;
 
 /**
  * Controller UseController
+ * Controller de départ (page accueil)
  * @property JsUtils $jquery
  */
+
 class Main extends ControllerBase {
 
     public function index() {
@@ -34,6 +36,9 @@ class Main extends ControllerBase {
         $this->loadView("index.html");
     }
 
+    /**
+     * Fonction pour afficher et parametrer la barre de recherche en fonction du status de l'utilisateur
+     */
     public function recherche() {
         if (!isset($_SESSION["user"])) {
             $semantic = $this->jquery->semantic();
@@ -58,6 +63,9 @@ class Main extends ControllerBase {
         }
     }
 
+    /**
+     * Fonction pour afficher et parametrer les boutons en fonction du status de l'utilisateur
+     */
     public function bouton() {
         $semantic = $this->jquery->semantic();
         if (!isset($_SESSION["user"])) {
@@ -83,6 +91,9 @@ class Main extends ControllerBase {
         }
     }
 
+    /**
+     * Fonction pour créer la session d'un utlisateur lorsqu'il se connecte avec les bons identifiant et mot de passe
+     */
     public function connexion() {
         $semantic = $this->jquery->semantic();
         $user = DAO::getOne("models\Utilisateur", "login='" . $_POST['login'] . "'");
@@ -103,21 +114,20 @@ class Main extends ControllerBase {
 
     public function liens() {
         if (isset($_SESSION["user"])){
-            $liens = DAO::getAll("models\Lienweb","idUtilisateur=".$_SESSION['user']->getId()."");
 
-            /*foreach ($liens as $lien){
-                $link = $lien->getUrl();
-                echo "<iframe src=http://$link style=\"border:1px lightgrey solid;\" scrolling=\"no\" height=\"250\" width=\"291\">
-                </iframe>";
-            }*/
         }
     }
 
+    /**
+     * Fonction pour détruire la session et redirige vers l'accueil directement
+     */
     public function deconnexion() {
         session_unset();
         session_destroy();
-        $this->jquery->get("Main/index", "body");
+        header("location:/homepage");
+        $this->jquery->get("", "body");
         echo $this->jquery->compile($this->view);
+
     }
 
 }

@@ -22,8 +22,10 @@ use models\Site;
 
 class LinksController extends ControllerBase
 {
-
-    public function index() { // Page Affichage des boutons + Liens perso avec la méthode all()
+    /**
+     * Page d'accueil pour la gestion des liens
+     */
+    public function index() {
         $semantic=$this->jquery->semantic();
 
         $btHome=$semantic->htmlButton("btHome","");
@@ -38,7 +40,10 @@ class LinksController extends ControllerBase
         $this->loadView("links/index.html");
     }
 
-    private function _all() { // Affichage liens perso
+    /**
+     * Affichage d'une table regroupant tout les liens dans la base de données
+     */
+    private function _all() {
         $links=DAO::getAll("models\Lienweb");
 
         $semantic=$this->jquery->semantic();
@@ -58,7 +63,10 @@ class LinksController extends ControllerBase
         $this->loadView("links/all.html");
     }
 
-    private function _addLink() { // Ajout d'un objet liens
+    /**
+     * Fonction pour créer le formulaire d'ajout de liens
+     */
+    private function _addLink() {
         $semantic=$this->jquery->semantic();
 
         $link=new Lienweb();
@@ -83,7 +91,11 @@ class LinksController extends ControllerBase
         $this->jquery->compile($this->view);
         $this->loadView("links/add.html");
     }
-    public function newLink() { // création de l'objet
+
+    /**
+     * Fonction pour créer l'objet et l'enregistrer dans la base données avec les données recuperer depuis le formulaire d'ajout
+     */
+    public function newLink() {
         $semantic=$this->jquery->semantic();
         $link=new Lienweb();
 
@@ -101,7 +113,11 @@ class LinksController extends ControllerBase
         }
     }
 
-    private function _editLink($id) { // édition de l'objet liens
+    /**
+     * Création du formulaire d'édition du lien selectionné
+     * @param $id
+     */
+    private function _editLink($id) {
         $semantic=$this->jquery->semantic();
 
         $link = DAO::getOne("models\Lienweb",$id  );
@@ -127,7 +143,11 @@ class LinksController extends ControllerBase
         $this->jquery->compile($this->view);
         $this->loadView("links/edit.html");
     }
-    public function updateLink() { // mise a jour de l'objet liens
+
+    /**
+     * Mise a jour du liens dans la base données avec les données recuperer dans le formulaire
+     */
+    public function updateLink() {
         $semantic=$this->jquery->semantic();
 
         $link = DAO::getOne("models\Lienweb",$_POST["id"] );
@@ -147,6 +167,10 @@ class LinksController extends ControllerBase
 
     }
 
+    /**
+     * Fonction pour supprimer le lien selectionner
+     * @param $id
+     */
     public function deleteLink($id) { // suppression objet liens
         $semantic=$this->jquery->semantic();
         $link = DAO::getOne("models\Lienweb",$id );
@@ -159,8 +183,10 @@ class LinksController extends ControllerBase
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-    public function indexPerso() { // Page Affichage des boutons + Liens perso avec la méthode allPerso()
+    /**
+     * Gestion des liens Perso depuis le profil de l'utilisateur
+     */
+    public function indexPerso() {
         $semantic=$this->jquery->semantic();
 
         $btHome=$semantic->htmlButton("btHome","");
@@ -175,7 +201,10 @@ class LinksController extends ControllerBase
         $this->loadView("links/mesLiens.html");
     }
 
-    private function _allPerso() { // Affichage liens perso
+    /**
+     * Creation d'une table avec tout les liens liés a l'utilisateur connecté
+     */
+    private function _allPerso() {
         $semantic=$this->jquery->semantic();
 
         $links=DAO::getAll("models\Lienweb","idUtilisateur = ".$_SESSION['user']->getId());
@@ -197,7 +226,10 @@ class LinksController extends ControllerBase
         $this->loadView("links/all.html");
     }
 
-    private function _addLinkPerso() { // Ajout liens perso
+    /**
+     * Creation d'un formulaire afin d'ajouter un lien et qu'il soit lié à l'utilisateur connecté
+     */
+    private function _addLinkPerso() {
         $semantic=$this->jquery->semantic();
 
         $link=new Lienweb();
@@ -216,7 +248,11 @@ class LinksController extends ControllerBase
         $this->jquery->compile($this->view);
         $this->loadView("links/add.html");
     }
-    public function newLinkPerso() { // création nouvel objet
+
+    /**
+     * Creation de l'objet et l'enregistre dans la base de données avec les données recupérer depuis le formulaire
+     */
+    public function newLinkPerso() {
         $semantic=$this->jquery->semantic();
 
         $link=new Lienweb();
@@ -233,7 +269,11 @@ class LinksController extends ControllerBase
         }
     }
 
-    private function _editLinkPerso($id) { // Edition de l'objet
+    /**
+     * @param $id
+     * Creation d'un formulaire d'édition du lien perso
+     */
+    private function _editLinkPerso($id) {
         $semantic=$this->jquery->semantic();
 
         $link = DAO::getOne("models\Lienweb",$id  );
@@ -252,7 +292,11 @@ class LinksController extends ControllerBase
         $this->jquery->compile($this->view);
         $this->loadView("links/edit.html");
     }
-    public function updateLinkPerso() { // mise à jour de l'objet
+
+    /**
+     * Mise a jour du liens dans la base de données grace aux données recuperer dans le formulaire
+     */
+    public function updateLinkPerso() {
         $semantic=$this->jquery->semantic();
 
         $link = DAO::getOne("models\Lienweb",$_POST["id"] );
@@ -269,7 +313,11 @@ class LinksController extends ControllerBase
         echo $this->jquery->compile($this->view);
     }
 
-    public function deleteLinkPerso($id) { // suppression de l'objet
+    /**
+     * @param $id
+     * Supprime le liens selectionner
+     */
+    public function deleteLinkPerso($id) {
         $semantic=$this->jquery->semantic();
         $link = DAO::getOne("models\Lienweb",$id );
 

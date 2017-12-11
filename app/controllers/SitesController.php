@@ -21,6 +21,9 @@ use models\Site;
 
 class SitesController extends ControllerBase
 {
+    /**
+     * Page accueil gestion des sites
+     */
     public function index() {
 
         $semantic=$this->jquery->semantic();
@@ -36,7 +39,9 @@ class SitesController extends ControllerBase
         $this->jquery->compile($this->view);
         $this->loadView("sites/index.html");
 }
-
+    /**
+     * Creation d'une table regroupant tout les sites inscrit dans la base de données
+     */
     private function _all(){
         $sites=DAO::getAll("models\Site");
 
@@ -60,6 +65,9 @@ class SitesController extends ControllerBase
         $this->loadView("sites/all.html");
     }
 
+    /**
+     * Creation d'un formulaire d'ajout de site
+     */
     private function _addSite() {
         $semantic=$this->jquery->semantic();
 
@@ -70,12 +78,15 @@ class SitesController extends ControllerBase
         $form->setCaptions(["Nom de l'établissement","Latitude","Longitude","Ecart","Fond d'écran","Couleur","Ordre","Options","Valider"]);
         $form->fieldAsSubmit("submit","blue","SitesController/newSite/","#divSites");
     }
-
     public function addSite() {
         $this->_addSite();
         $this->jquery->compile($this->view);
         $this->loadView("sites/add.html");
     }
+
+    /**
+     * Creation d'un nouveau objet site et enregistrement dans la base de données grace aux données recuperer dans le formulaire
+     */
     public function newSite() {
         $semantic=$this->jquery->semantic();
         $site=new Site();
@@ -88,6 +99,10 @@ class SitesController extends ControllerBase
         }
     }
 
+    /**
+     * @param $id
+     * Creation d'un formulaire d'edition de l'objet site
+     */
     private function _editSite($id) {
         $semantic=$this->jquery->semantic();
 
@@ -99,12 +114,16 @@ class SitesController extends ControllerBase
         $form->setCaptions(["Nom de l'établissement","Latitude","Longitude","Ecart","Fond d'écran","Couleur","Ordre","Options","Valider"]);
         $form->fieldAsSubmit("submit","blue","SitesController/updateSite/".$id,"#divSites");
     }
-
     public function editSite($id) {
         $this->_editSite($id);
         $this->jquery->compile($this->view);
         $this->loadView("sites/edit.html");
     }
+
+    /**
+     * @param $id
+     * Mise a jour de l'objet site selectionné avec les données du formulaire
+     */
     public function updateSite($id) {
         $semantic=$this->jquery->semantic();
         $site = DAO::getOne("models\Site",$id );
@@ -118,7 +137,10 @@ class SitesController extends ControllerBase
 
     }
 
-
+    /**
+     * @param $id
+     * Supprime l'objet site selectionné
+     */
     public function deleteSite($id) {
         $semantic=$this->jquery->semantic();
         $site = DAO::getOne("models\Site",$id );

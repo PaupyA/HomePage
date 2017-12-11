@@ -19,8 +19,34 @@ use micro\utils\RequestUtils;
 
 class BoardController extends ControllerBase
 {
-    
-    // Boutons de gestion des sites/utilisateurs/liens
+    /**
+     * @return bool
+     * @return true si on accepte l'accès a la page selon le statut de l'utilisateur
+     * @return false si on refuse l'accès
+     * Si @return false la fonction OnInvalidcControl() sera appellé automatiquement
+     */
+    public function isValid()
+    {
+        if(!isset($_SESSION["user"])){
+            return false;
+        }elseif ($_SESSION["user"]->getStatut() == "Super administrateur"){
+            return true;
+        }elseif ($_SESSION["user"]->getStatut() != "Super administrateur"){
+            return false;
+        }
+    }
+
+    /**
+     * Redirige vers la page d'accueil lorsque isValid() @return false
+     */
+    public function onInvalidControl()
+    {
+        header("location:/homepage");
+    }
+
+    /**
+     * Création des boutons néccessaire pour la redirection vers les controllers d'administration
+     */
     public function index() {
         $semantic=$this->jquery->semantic();
 
@@ -42,4 +68,5 @@ class BoardController extends ControllerBase
         $this->jquery->compile($this->view);
         $this->loadView("board/index.html");
     }
+
 }

@@ -22,6 +22,9 @@ use models\Utilisateur;
 class UsersController extends ControllerBase
 {
 
+    /**
+     * Page accueil gestion des utilisateurs
+     */
     public function index(){
         $semantic = $this->jquery->semantic();
 
@@ -38,6 +41,9 @@ class UsersController extends ControllerBase
         $this->loadView("users/index.html");
     }
 
+    /**
+     * Creation d'une table regroupant tout les utilisateur inscrit dans la base de données
+     */
     private function _all(){
         $semantic=$this->jquery->semantic();
 
@@ -56,13 +62,15 @@ class UsersController extends ControllerBase
         $table->setTargetSelector("#divUsers");
         $table->fieldAsHidden("id");
     }
-
     public function all(){
         $this->_all();
         $this->jquery->compile($this->view);
         $this->loadView("users/all.html");
     }
 
+    /**
+     * Creation d'un formulaire d'ajout de moteur
+     */
     private function _addUser(){
         $semantic=$this->jquery->semantic();
 
@@ -89,6 +97,10 @@ class UsersController extends ControllerBase
         $this->jquery->compile($this->view);
         $this->loadView("users/add.html");
     }
+
+    /**
+     * Creation d'un nouveau objet utilisateur et enregistrement dans la base de données grace aux données recuperer dans le formulaire
+     */
     public function newUser() {
         $semantic=$this->jquery->semantic();
         $user=new Utilisateur();
@@ -109,6 +121,10 @@ class UsersController extends ControllerBase
         }
     }
 
+    /**
+     * @param $id
+     * Creation d'un formulaire d'edition de l'objet utilisateur
+     */
     private function _editUser($id){
         $semantic=$this->jquery->semantic();
 
@@ -135,6 +151,10 @@ class UsersController extends ControllerBase
         $this->loadView("users/edit.html");
     }
 
+    /**
+     * @param $id
+     * Mise a jour de l'objet utilisateur selectionné avec les données du formulaire
+     */
     public function updateUser($id) {
         $semantic=$this->jquery->semantic();
         $user = DAO::getOne("models\Utilisateur",$id );
@@ -152,6 +172,10 @@ class UsersController extends ControllerBase
 
     }
 
+    /**
+     * @param $id
+     * Supprime l'objet utilisateur selectionné
+     */
     public function deleteUser($id) {
         $semantic=$this->jquery->semantic();
         $user = DAO::getOne("models\Utilisateur",$id );
