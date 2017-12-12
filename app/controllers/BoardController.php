@@ -48,6 +48,7 @@ class BoardController extends ControllerBase
      * Création des boutons néccessaire pour la redirection vers les controllers d'administration
      */
     public function index() {
+
         $semantic=$this->jquery->semantic();
 
         $btHome=$semantic->htmlButton("btHome","");
@@ -64,6 +65,20 @@ class BoardController extends ControllerBase
 
         $btMoteur=$semantic->htmlButton("btMoteur","Gestion des moteurs");
         $btMoteur->asLink("MoteursController");
+
+        /*
+         * Définis le fond d'écran selon le statut de l'utilisateur
+         */
+        if(!isset($_SESSION['user'])){
+            $fondEcran = "https://wallpaperscraft.com/image/forest_lake_reflection_island_mist_97668_1920x1080.jpg";
+        } elseif (isset($_SESSION['user'])) {
+            $fondEcran = $_SESSION['user']->getFondEcran();
+        }
+
+        /*
+         * Applique le fond d'écran
+         */
+        $this->jquery->exec("$('body').attr('style','background: url(".$fondEcran.") no-repeat fixed; background-size: cover;');",true);
 
         $this->jquery->compile($this->view);
         $this->loadView("board/index.html");
