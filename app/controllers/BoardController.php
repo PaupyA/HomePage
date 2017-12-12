@@ -20,7 +20,7 @@ use micro\utils\RequestUtils;
 class BoardController extends ControllerBase
 {
     /**
-     * @return bool
+     * Vérifie le statut de l'utilisateur et @return bool
      * @return true si on accepte l'accès a la page selon le statut de l'utilisateur
      * @return false si on refuse l'accès
      * Si @return false la fonction OnInvalidcControl() sera appellé automatiquement
