@@ -91,6 +91,15 @@ class Main extends ControllerBase {
         }
     }
 
+    public function liens() {
+        if(isset($_SESSION["user"])) {
+            $links = DAO::getAll("models\Lienweb", "idUtilisateur = " . $_SESSION['user']->getId());
+            foreach ($links as $link){
+                $this->jquery->json("http://iframe.ly/api/oembed?url=http%3A%2F%2F".$link->getURL()."&api_key=6c43feff3aeeac24f7da8c", "get", "{}", null, "$('body')", true);
+            }
+        }
+    }
+
     /**
      * Fonction pour créer la session d'un utlisateur lorsqu'il se connecte avec les bons identifiant et mot de passe
      */
@@ -110,12 +119,6 @@ class Main extends ControllerBase {
             $this->jquery->get("Main/index","body");
         }
         echo $this->jquery->compile($this->view);
-    }
-
-    public function liens() {
-        if (isset($_SESSION["user"])){
-
-        }
     }
 
     /**
