@@ -92,10 +92,17 @@ class Main extends ControllerBase {
     }
 
     public function liens() {
+        $semantic = $this->jquery->semantic();
+        $i=1;
         if(isset($_SESSION["user"])) {
             $links = DAO::getAll("models\Lienweb", "idUtilisateur = " . $_SESSION['user']->getId());
             foreach ($links as $link){
-                $this->jquery->json("http://iframe.ly/api/oembed?url=http%3A%2F%2F".$link->getURL()."&api_key=6c43feff3aeeac24f7da8c", "get", "{}", null, "$('body')", true);
+                //$image = $semantic->htmlImage("img".$i,"http://api.page2images.com/directlink?p2i_url=http://".$link->getURL()."&p2i_device=6&p2i_screen=1024x768&p2i_size=150x150&p2i_screenframe=mac_laptop&p2i_key=7fdd9808f011736a'>","","250px");
+                $image = $semantic->htmlImage("img".$i,"http://api.screenshotmachine.com/?key=3ad3ee&dimension=200x200&&url=http://".$link->getURL()."","","250px");
+                $image->setCircular();
+                $image->addDimmer(["on"=>"hover"])->asIcon("linkify",$link->getLibelle());
+                $image->asLink("http://".$link->getURL());
+                $i= $i +1 ;
             }
         }
     }
