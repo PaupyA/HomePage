@@ -25,14 +25,19 @@ abstract class ControllerBase extends Controller{
                 $this->loadView("main/vHeader.html");
             }
         }
+
+        /**
+         * Si l'utilisateur n'est pas connecté applique fond écran de base
+         * Sinon va chercher le fond d'écran de l'utilisateur
+         */
         if(!isset($_SESSION['user'])){
             $fondEcran = "https://wallpaperscraft.com/image/forest_lake_reflection_island_mist_97668_1920x1080.jpg";
         } elseif (isset($_SESSION['user'])) {
             $fondEcran = $_SESSION['user']->getFondEcran();
         }
 
-        /*
-         * Applique le fond d'écran
+        /**
+         * Applique l'image en background sur le body
          */
         $this->jquery->exec("$('body').attr('style','background: url(".$fondEcran.") no-repeat fixed; background-size: cover;');",true);
     }

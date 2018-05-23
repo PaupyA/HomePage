@@ -19,6 +19,9 @@ use models\Utilisateur;
 
 class Main extends ControllerBase {
 
+    /**
+     * Page principale
+     */
     public function index() {
         $semantic = $this->jquery->semantic();
 
@@ -91,11 +94,15 @@ class Main extends ControllerBase {
         }
     }
 
+    /**
+     * Si l'utilisateur est connecté affiche les liens personnels
+     */
     public function liens() {
         $semantic = $this->jquery->semantic();
         $i=1;
         if(isset($_SESSION["user"])) {
             $links = DAO::getAll("models\Lienweb", "idUtilisateur = " . $_SESSION['user']->getId());
+            $text = $semantic->htmlHeader("text","1","Liens perso");
             foreach ($links as $link){
                 //$image = $semantic->htmlImage("img".$i,"http://api.page2images.com/directlink?p2i_url=http://".$link->getURL()."&p2i_device=6&p2i_screen=1024x768&p2i_size=150x150&p2i_screenframe=mac_laptop&p2i_key=7fdd9808f011736a'>","","250px");
                 $image = $semantic->htmlImage("img".$i,"http://api.screenshotmachine.com/?key=3ad3ee&dimension=200x200&&url=http://".$link->getURL()."","","250px");
@@ -108,7 +115,8 @@ class Main extends ControllerBase {
     }
 
     /**
-     * Fonction pour créer la session d'un utlisateur lorsqu'il se connecte avec les bons identifiant et mot de passe
+     * Fonction pour créer la session d'un utlisateur lorsqu'il se connecte
+     * avec les bons identifiant et mot de passe
      */
     public function connexion() {
         $semantic = $this->jquery->semantic();

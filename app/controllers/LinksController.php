@@ -38,6 +38,7 @@ class LinksController extends ControllerBase
         $this->_all();
 
         $this->jquery->compile($this->view);
+
         $this->loadView("links/index.html");
     }
 
@@ -71,6 +72,7 @@ class LinksController extends ControllerBase
         $semantic=$this->jquery->semantic();
 
         $link=new Lienweb();
+
         $link->idSite="";
         $link->idUtilisateur="";
 
@@ -102,9 +104,10 @@ class LinksController extends ControllerBase
 
         RequestUtils::setValuesToObject($link,$_POST);
 
+        RequestUtils::setValuesToObject($link,$_POST);
+
         $site=DAO::getOne("models\Site",$_POST["idSite"]);
         $user=DAO::getOne("models\Utilisateur",$_POST["idUtilisateur"]);
-
         $link->setSite($site);
         $link->setUtilisateur($user);
 
@@ -122,9 +125,9 @@ class LinksController extends ControllerBase
         $semantic=$this->jquery->semantic();
 
         $link = DAO::getOne("models\Lienweb",$id  );
-        $link->idSite=$link->getSite()->getId();
         $link->idUtilisateur=$link->getUtilisateur()->getId();
         $form=$semantic->dataForm("frmLinkEdit", $link);
+
         $form->setFields(["id","libelle","url\n","ordre","idSite","idUtilisateur","\nsubmit"]);
         $form->setCaptions(["id","Site internet","URL","Ordre","Site","Utilisateur","Valider"]);
 

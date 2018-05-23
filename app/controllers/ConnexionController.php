@@ -21,7 +21,9 @@ use models\Utilisateur;
  */
 class ConnexionController extends ControllerBase {
 
-    // Page de connexion
+    /**
+     * Interface de connexion
+     */
     public function index() {
         $semantic=$this->jquery->semantic();
 
@@ -36,8 +38,10 @@ class ConnexionController extends ControllerBase {
         $this->jquery->compile($this->view);
         $this->loadView("connexion/index.html");
     }
-    
-    // Fonction connexion
+
+    /**
+     * Système de connexion
+     */
     public function connexion() {
         $semantic=$this->jquery->semantic();
         if($_SESSION["user"]=DAO::getOne("models\Utilisateur","login='".$_POST['login']."'")
@@ -48,9 +52,5 @@ class ConnexionController extends ControllerBase {
         }else{
             echo $semantic->htmlMessage("msg","Identifiant et/ou mot de passe incorrect.");
         }
-    }
-
-    public function deconnexion() {
-
     }
 }
